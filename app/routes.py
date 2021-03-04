@@ -5,6 +5,7 @@ from flask import Flask, render_template, redirect, url_for, request
 # create the application object
 app = Flask(__name__)
 
+
 # use decorators to link the function to a url
 @app.route('/')
 def home():
