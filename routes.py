@@ -5,8 +5,11 @@ import mysql.connector
 
 # create the application object
 app = Flask(__name__)
+
 # db = mysql.connector.connect(
-    
+#   host="localhost",
+#   user="yourusername",
+#   password="yourpassword"
 # )
 
 
