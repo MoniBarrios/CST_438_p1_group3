@@ -1,7 +1,7 @@
 #https://realpython.com/introduction-to-flask-part-2-creating-a-login-page/
 
 from flask import Flask, render_template, redirect, url_for, request
-import mysql.connector
+# import mysql.connector
 
 # create the application object
 app = Flask(__name__)
