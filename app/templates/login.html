@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>Login Story</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <div class="container">
+      <h1 align="center">Sign in</h1>
+      <br>
+	  <div align="center">
+		  <form action="" method="post">
+			<input type="text" style='padding: 4px' placeholder="Username" name="username" value="{{
+			  request.form.username }}">
+	  </div>
+	  <div align="center">
+			 <input type="password" style='padding: 4px' placeholder="Password" name="password" value="{{
+			  request.form.password }}">
+	  </div>
+	  <div align="center">
+		<input style='padding: 4px' class="btn btn-default" type="submit" value="Login">
+			{% if error %}
+			<p class="error"><strong>Error:</strong> {{ error }}
+			{% endif %}
+		</div>
+		</form>
+    </div>
+  </body>
+</html>

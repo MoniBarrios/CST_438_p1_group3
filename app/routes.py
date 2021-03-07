@@ -1,24 +1,31 @@
-from flask import Flask, render_template, flash, redirect, url_for, request
+
+#https://realpython.com/introduction-to-flask-part-2-creating-a-login-page/
+
+from flask import Flask, render_template, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 
+
+# create the application object
 app = Flask(__name__)
 
-# @app.route('/register', methods = ['GET', 'POST'])
-# def createAccount():
+# use decorators to link the function to a url
+@app.route('/')
+def home():
+    return "Hello, World!"  # return a string
 
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')  # render a template
 
-# @app.route('/login', methods = ['GET', 'POST'])
-# def login():
-
-
-# @app.route('/logout')
-# def logout():
-
-
-# @app.route('/', methods = ['GET', 'POST'])
-# @app.route('/home', methods = ['GET', 'POST'])
-# # @login_required
-# def index():
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] == 'admin' and request.form['password'] == 'admin':
+            return admin()
+        elif request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Please try again.'
+    return render_template('login.html', error=error)
 
 
 @app.route('/wishlist', methods = ['GET', 'POST'])
@@ -44,9 +51,9 @@ def wishlist():
     return render_template('listpage.html', wishlist = items)
 
 # @app.route('/getWishlist', methods = ['GET', 'POST'])
-# def getWishlist();
+# def getWishlist():
 
-#     return wishlist;
+#     return wishlist
 
 @app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
 def edit_item(item_id):
@@ -62,5 +69,6 @@ def edit_item(item_id):
     return item
 
 
+# start the server with the 'run()' method
 if __name__ == '__main__':
     app.run(debug=True)
