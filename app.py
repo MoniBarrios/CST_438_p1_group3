@@ -1,12 +1,18 @@
-
 #https://realpython.com/introduction-to-flask-part-2-creating-a-login-page/
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
-
+# import mysql.connector
 
 # create the application object
 app = Flask(__name__)
+
+# db = mysql.connector.connect(
+#   host="localhost",
+#   user="yourusername",
+#   password="yourpassword"
+# )
+
 
 # use decorators to link the function to a url
 @app.route('/')
@@ -67,7 +73,6 @@ def edit_item(item_id):
         }
 
     return item
-
 
 # start the server with the 'run()' method
 if __name__ == '__main__':
