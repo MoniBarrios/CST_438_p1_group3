@@ -1,0 +1,14 @@
+
+//Create User
+INSERT INTO `user` ( `userID`,`username`, `password`) VALUES
+(2,'admin','admin');
+
+//Create Item
+INSERT INTO `item` ( `itemID`,`name`, `description`, `ImgUrl`) VALUES
+('Mountains','Beautiful mountains and lake of who knows where','https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg');
+
+//Select user info by username
+SELECT * FROM user WHERE username = %(username)s
+
+//Select item 
+SELECT itemID, name, description, picture, price FROM item WHERE name = %(name)s
