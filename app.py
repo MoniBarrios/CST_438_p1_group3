@@ -82,7 +82,7 @@ def login():
     if request.method == 'POST':
         sql = "SELECT * FROM user WHERE username = %(username)s"
         name = request.form['username']
-        cur.execute(sql,{'username':name})
+        cur.execute(sql,{ 'username':name })
 
         rows = cur.fetchone()
         if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
