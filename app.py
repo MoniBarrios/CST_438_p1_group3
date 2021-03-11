@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
-# import mysql.connector
+import mysql.connector
 
 # create the application object
 app = Flask(__name__)
@@ -10,11 +10,16 @@ app = Flask(__name__)
 users = {
     "admin" : "admin"
 }
-# db = mysql.connector.connect(
-#   host="localhost",
-#   user="yourusername",
-#   password="yourpassword"
-# )
+
+db = mysql.connector.connect(
+  host="pxukqohrckdfo4ty.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+  user="shp71ch2pepxhw20",
+  password="x86b1di398unqos5",
+  database="hsmokzpr63mftd01"
+ )
+
+cur = db.cursor()
+
 def check(password): #will check if password from user is valid
   length = False
   special = False
@@ -100,10 +105,16 @@ def login():
     error = None
     username = None
     password = None
+    
     print(users)
     x = users.keys()
     if request.method == 'POST':
-        if request.form['username'] == 'admin' and request.form['password'] == 'admin':
+        sql = "SELECT * FROM user WHERE username = %(username)s"
+        name = request.form['username']
+        cur.execute(sql,{'username':name})
+
+        rows = cur.fetchone()
+        if request.form['username'] == rows[0] and request.form['password'] == rpws[1]:
           return admin()
         else: #request.form['username'] != 'admin' or request.form['password'] != 'admin':
             for user in x:
