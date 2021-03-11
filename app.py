@@ -85,7 +85,7 @@ def login():
         cur.execute(sql,{'username':name})
 
         rows = cur.fetchone()
-        if request.form['username'] == rows[0] and request.form['password'] == rpws[1]:
+        if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
           return admin()
         else: #request.form['username'] != 'admin' or request.form['password'] != 'admin':
             for user in x:
