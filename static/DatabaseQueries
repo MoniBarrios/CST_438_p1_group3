@@ -11,4 +11,4 @@ INSERT INTO `item` ( `itemID`,`name`, `description`, `ImgUrl`) VALUES
 SELECT * FROM user WHERE username = %(username)s
 
 //Select item 
-SELECT itemID, name, description, picture, price FROM item WHERE name = %(name)s
+SELECT itemID, name, description, ImgUrl, FROM item WHERE name = %(name)s
