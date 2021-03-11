@@ -62,6 +62,11 @@ def create_account():
         password = request.form['password']
         if check(password) :
             users[username] = password
+
+            sql = "INSERT INTO `user` (`username`, `password`) VALUES (%s,%s)"
+            data = (username, password)
+            cur.execute(sql, data)
+            
             return redirect(url_for('login'))
         else:
             error = reason(password)
