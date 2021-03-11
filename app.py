@@ -23,6 +23,35 @@ def home():
 def admin():
     return render_template('admin.html')  # render a template
 
+@app.route('/admin/viewusers', methods=['GET', 'POST'])
+def viewusers():
+    users =[
+        {
+            'id': 2,
+            'username': 'antPerez',
+            'password': '$ky1234',
+            'hasList': True
+        },
+        {
+            'id': 48,
+            'username': 'jayZep',
+            'password': 'Pa$$1234',
+            'hasList': False
+        }
+    ]
+    return render_template('admin_viewusers.html', users=users)
+
+@app.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
+def edit_user(user_id):
+
+    user = {
+        'username': 'antPerez',
+        'password': '$ky1234',
+        'hasList': True
+    }
+
+    return user
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -39,14 +68,14 @@ def wishlist():
 
     items = [
         {
-            'id': '1',
+            'id': 1,
             'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
             'name': 'mountains',
             'description': 'beautiful mountains and lake of who knows where',
             'links': 'google.com'
         },
         {
-            'id': '2',
+            'id': 2,
             'image': 'https://cdn1.matadornetwork.com/blogs/1/2019/10/seljalandsfoss-most-instagrammed-waterfalls-world-1200x855.jpg',
             'name': 'waterfall',
             'description': 'beautiful waterfall of unknown area',

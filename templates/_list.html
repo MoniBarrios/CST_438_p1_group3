@@ -4,12 +4,9 @@
     <td id='desc{{item.id}}'>{{item.description}}</td>
     <td id='link{{item.id}}'>{{item.links}}</td>
     <td>
-        <!-- <form action="{{ url_for('edit_item', item_id=item.id) }}" method = get>
-            <input id='editButton' class ='btn btn-warning' type="submit" name="Edit" value="Edit" data-toggle="modal" data-target="#editModal"/>
-          </form> -->
         <button id="{{item.id}}" type="button" class="btn editButton btn-warning" data-toggle="modal" data-target="#editModal">Edit</button>
     </td>
     <td>
-        <button type="button" class="btn btn-danger">Remove</button>
+        <button id="{{item.id}}" type="button" class="btn removeButton btn-danger">Remove</button>
     </td>
 </tr>
