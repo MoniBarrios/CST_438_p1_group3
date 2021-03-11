@@ -1,0 +1,17 @@
+<tr>
+    <td id='name{{user.id}}'>{{user.username}}</td>
+    <td id='desc{{user.id}}'>{{user.password}}</td>
+
+    {% if user.hasList %}
+    <td id='link{{user.id}}'>Yes</td>
+    {% else %}
+    <td id='link{{user.id}}'>No</td>
+    {% endif %}
+
+    <td>
+        <button id="{{user.id}}" type="button" class="btn editUserButton btn-warning" data-toggle="modal" data-target="#editUserModal">Edit</button>
+    </td>
+    <td>
+        <button id='{{user.id}}' type="button" class="btn deleteUserButton btn-danger">Delete</button>
+    </td>
+</tr>
