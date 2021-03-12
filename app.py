@@ -65,7 +65,7 @@ def create_account():
 
             sql = "INSERT INTO user (username, password) VALUES (%s,%s)"
             data = (username, password)
-            cur.execute(sql, data)
+            cursor.execute(sql, data)
             
             return redirect(url_for('login'))
         else:
@@ -81,15 +81,16 @@ def login():
     error = None
     username = None
     password = None
+    cursor = dbConnector.cursor()
     
     print(users)
     x = users.keys()
     if request.method == 'POST':
         sql = "SELECT * FROM user WHERE username = %(username)s"
         name = request.form['username']
-        cur.execute(sql,{ 'username':name })
+        cursor.execute(sql,{ 'username':name })
 
-        rows = cur.fetchone()
+        rows = cursor.fetchone()
         if request.form['username'] = 'admin' or request.form['password'] = 'admin':
           return admin()
         else: #request.form['username'] != 'admin' or request.form['password'] != 'admin':
