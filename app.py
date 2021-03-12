@@ -11,14 +11,12 @@ users = {
     "admin" : "admin"
 }
 
-db = mysql.connector.connect(
+dbConnector = mysql.connector.connect(
   host="pxukqohrckdfo4ty.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
   user="shp71ch2pepxhw20",
   password="x86b1di398unqos5",
   database="hsmokzpr63mftd01"
  )
-
-cur = db.cursor()
 
 def check(password): #will check if password from user is valid
   length = False
@@ -63,7 +61,9 @@ def create_account():
         if check(password) :
             users[username] = password
 
-            sql = "INSERT INTO `user` (`username`, `password`) VALUES (%s,%s)"
+            cursor = dbConnector.cursor()
+
+            sql = "INSERT INTO user (username, password) VALUES (%s,%s)"
             data = (username, password)
             cur.execute(sql, data)
             
