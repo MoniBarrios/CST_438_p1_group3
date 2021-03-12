@@ -64,7 +64,7 @@ def create_account():
             users[username] = password
             return redirect(url_for('login'))
 
-     else:
+    else:
         error = reason(password)
     return render_template('create_account.html', error=error)
 
