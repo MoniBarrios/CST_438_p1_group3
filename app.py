@@ -27,7 +27,6 @@ def check(password): #will check if password from user is valid
   
   return length and special
 
-
 def reason(password): #will tell you what you need to fix in password
   length = False
   special = False
@@ -46,6 +45,13 @@ def reason(password): #will tell you what you need to fix in password
   if not length:
     return "Password must be longer than 6 characters."
 
+def valid_username(username):
+  user = users.keys()
+  for x in user:
+    if x == username:
+      return False
+  return True
+
 # use decorators to link the function to a url
 @app.route('/', methods=['GET', 'POST'])
 def create_account():
@@ -55,9 +61,11 @@ def create_account():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if check(password) :
+        if check(password) and valid_username(username):
             users[username] = password
             return redirect(url_for('login'))
+        elif not valid_username(username):
+          error = "Username already exists."
         else:
             error = reason(password)
     return render_template('create_account.html', error=error)
@@ -80,12 +88,18 @@ def login():
             for user in x:
                 if request.form['username'] == user:
                     if request.form['password'] == users.get(request.form['username']):
-                        return redirect(url_for('wishlist'))
+                        return redirect(url_for('landing_page'))
                     else:
                         error = "Wrong password."
                 else:
                     error = "No user with that username exists"
     return render_template('login.html', error=error)
+
+@app.route('/landing-page', methods = ['GET', 'POST'])
+def landing_page():
+  return render_template('index.html')
+
+
 
 
 @app.route('/wishlist', methods = ['GET', 'POST'])
