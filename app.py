@@ -62,10 +62,17 @@ def create_account():
         password = request.form['password']
         if check(password) :
             users[username] = password
-            return redirect(url_for('login'))
 
-    else:
-        error = reason(password)
+            sql = "INSERT INTO `user` (`username`, `password`) VALUES (%s,%s)"
+            data = (username, password)
+            cur.execute(insert_stmt, data)
+            name = request.form['username']
+            cur.execute(sql,{ 'username':name })
+            rows = cur.fetchone()
+
+            return redirect(url_for('login'))
+        else:
+            error = reason(password)
     return render_template('create_account.html', error=error)
 
 @app.route('/admin')
