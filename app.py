@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
-# import mysql.connector
+import mysql.connector
 
 # create the application object
 app = Flask(__name__)
@@ -10,11 +10,16 @@ app = Flask(__name__)
 users = {
     "admin" : "admin"
 }
-# db = mysql.connector.connect(
-#   host="localhost",
-#   user="yourusername",
-#   password="yourpassword"
-# )
+
+db = mysql.connector.connect(
+  host="pxukqohrckdfo4ty.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+  user="shp71ch2pepxhw20",
+  password="x86b1di398unqos5",
+  database="hsmokzpr63mftd01"
+ )
+
+cur = db.cursor()
+
 def check(password): #will check if password from user is valid
   length = False
   special = False
@@ -74,15 +79,50 @@ def create_account():
 def admin():
     return render_template('admin.html')  # render a template
 
+@app.route('/admin/viewusers', methods=['GET', 'POST'])
+def viewusers():
+    users =[
+        {
+            'id': 2,
+            'username': 'antPerez',
+            'password': '$ky1234',
+            'hasList': True
+        },
+        {
+            'id': 48,
+            'username': 'jayZep',
+            'password': 'Pa$$1234',
+            'hasList': False
+        }
+    ]
+    return render_template('admin_viewusers.html', users=users)
+
+@app.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
+def edit_user(user_id):
+
+    user = {
+        'username': 'antPerez',
+        'password': '$ky1234',
+        'hasList': True
+    }
+
+    return user
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     username = None
     password = None
+    
     print(users)
     x = users.keys()
     if request.method == 'POST':
-        if request.form['username'] == 'admin' and request.form['password'] == 'admin':
+        sql = "SELECT * FROM user WHERE username = %(username)s"
+        name = request.form['username']
+        cur.execute(sql,{'username':name})
+
+        rows = cur.fetchone()
+        if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
           return admin()
         else: #request.form['username'] != 'admin' or request.form['password'] != 'admin':
             for user in x:
@@ -107,14 +147,14 @@ def wishlist():
 
     items = [
         {
-            'id': '1',
+            'id': 1,
             'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
             'name': 'mountains',
             'description': 'beautiful mountains and lake of who knows where',
             'links': 'google.com'
         },
         {
-            'id': '2',
+            'id': 2,
             'image': 'https://cdn1.matadornetwork.com/blogs/1/2019/10/seljalandsfoss-most-instagrammed-waterfalls-world-1200x855.jpg',
             'name': 'waterfall',
             'description': 'beautiful waterfall of unknown area',
