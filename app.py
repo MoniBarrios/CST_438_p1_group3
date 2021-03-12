@@ -56,7 +56,7 @@ def reason(password): #will tell you what you need to fix in password
 def create_account():
     error = None
     username = None
-    password = ''
+    password = None
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
