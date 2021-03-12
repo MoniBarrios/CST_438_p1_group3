@@ -90,12 +90,12 @@ def login():
         cur.execute(sql,{ 'username':name })
 
         rows = cur.fetchone()
-        if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
+        if request.form['username'] = 'admin' or request.form['password'] = 'admin':
           return admin()
         else: #request.form['username'] != 'admin' or request.form['password'] != 'admin':
             for user in x:
-                if request.form['username'] == user:
-                    if request.form['password'] == users.get(request.form['username']):
+                if request.form['username'] == rows[0]:
+                    if request.form['password'] == rows[1]:
                         return redirect(url_for('wishlist'))
                     else:
                         error = "Wrong password."
