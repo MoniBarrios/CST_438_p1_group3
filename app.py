@@ -11,12 +11,14 @@ users = {
     "admin" : "admin"
 }
 
-dbConnector = mysql.connector.connect(
+db = mysql.connector.connect(
   host="pxukqohrckdfo4ty.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
   user="shp71ch2pepxhw20",
   password="x86b1di398unqos5",
   database="hsmokzpr63mftd01"
  )
+
+cur = db.cursor()
 
 def check(password): #will check if password from user is valid
   length = False
@@ -61,12 +63,13 @@ def create_account():
         if check(password) :
             users[username] = password
 
-            cursor = dbConnector.cursor()
-
-            sql = "INSERT INTO user (username, password) VALUES (%s,%s)"
+            sql = "INSERT INTO `user` (`username`, `password`) VALUES (%s,%s)"
             data = (username, password)
-            cursor.execute(sql, data)
-            
+            cursor.execute(insert_stmt, data)
+            name = request.form['username']
+            cur.execute(sql,{ 'username':name })
+            rows = cur.fetchone()
+
             return redirect(url_for('login'))
         else:
             error = reason(password)
@@ -81,27 +84,26 @@ def login():
     error = None
     username = None
     password = None
-    cursor = dbConnector.cursor()
     
     print(users)
     x = users.keys()
     if request.method == 'POST':
         sql = "SELECT * FROM user WHERE username = %(username)s"
         name = request.form['username']
-        cursor.execute(sql,{ 'username':name })
+        cur.execute(sql,{ 'username':name })
 
-        rows = cursor.fetchone()
-        if request.form['username'] = 'admin' or request.form['password'] = 'admin':
+        rows = cur.fetchone()
+    if request.form['username'] == 'admin' or request.form['password'] == 'admin':
           return admin()
-        else: #request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            for user in x:
-                if request.form['username'] == rows[0]:
-                    if request.form['password'] == rows[1]:
-                        return redirect(url_for('wishlist'))
-                    else:
-                        error = "Wrong password."
+    else: #request.form['username'] != 'admin' or request.form['password'] != 'admin':
+        for user in x:
+            if request.form['username'] == user:
+                if request.form['password'] == users.get(request.form['username']):
+                    return redirect(url_for('wishlist'))
                 else:
-                    error = "No user with that username exists"
+                    error = "Wrong password."
+            else:
+                error = "No user with that username exists"
     return render_template('login.html', error=error)
 
 
