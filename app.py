@@ -1,8 +1,8 @@
 #https://realpython.com/introduction-to-flask-part-2-creating-a-login-page/
 
 from flask import Flask, render_template, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
-# import mysql.connector
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+import pprint
 import mysql.connector
 
 # create the application object
@@ -77,25 +77,40 @@ def viewusers():
 
     sql = "SELECT * FROM user"
     cur.execute(sql)
-    
-    for user in cur:
-        print user
 
-    users =[
-        {
-            'id': 2,
-            'username': 'antPerez',
-            'password': '$ky1234',
-            'hasList': True
-        },
-        {
-            'id': 48,
-            'username': 'jayZep',
-            'password': 'Pa$$1234',
-            'hasList': False
+    accounts =[]
+    print(cur.description)
+    for account in cur:
+        print(account)
+
+        hasList = False
+
+        if (account[3]):
+            hasList = True
+
+        temp = {
+            'id': account[0],
+            'username': account[1],
+            'password': account[2],
+            'hasList': hasList
         }
-    ]
-    return render_template('admin_viewusers.html', users=users)
+        accounts.append(temp)
+
+    # accounts =[
+    #     {
+    #         'id': 2,
+    #         'username': 'antPerez',
+    #         'password': '$ky1234',
+    #         'hasList': True
+    #     },
+    #     {
+    #         'id': 48,
+    #         'username': 'jayZep',
+    #         'password': 'Pa$$1234',
+    #         'hasList': False
+    #     }
+    # ]
+    return render_template('admin_viewusers.html', accounts=accounts)
 
 @app.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
