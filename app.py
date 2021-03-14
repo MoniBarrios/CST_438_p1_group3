@@ -1,7 +1,8 @@
 #https://realpython.com/introduction-to-flask-part-2-creating-a-login-page/
 
 from flask import Flask, render_template, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user, login_required
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+# import mysql.connector
 import mysql.connector
 
 # create the application object
@@ -73,6 +74,13 @@ def admin():
 
 @app.route('/admin/viewusers', methods=['GET', 'POST'])
 def viewusers():
+
+    sql = "SELECT * FROM user"
+    cur.execute(sql)
+    
+    for user in cur:
+        print user
+
     users =[
         {
             'id': 2,
@@ -131,6 +139,9 @@ def login():
 @app.route('/wishlist', methods = ['GET', 'POST'])
 def wishlist():
 
+    # sql = "SELECT * FROM wishlist WHERE wishlistid = %(wishID)s"
+    # cur.execute(sql,{'wishID':})
+
     items = [
         {
             'id': 1,
@@ -157,6 +168,9 @@ def wishlist():
 
 @app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
 def edit_item(item_id):
+
+    # sql = "SELECT * FROM user WHERE username = %(username)s"
+
 
     item = {
             'id': '1',
