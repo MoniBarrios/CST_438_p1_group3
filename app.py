@@ -175,6 +175,25 @@ def landing_page():
 
   return render_template('index.html', error=error)
 
+@app.route('/user/edit_user', methods = ['GET', 'POST'])
+def user_edit_user():
+  error = None
+  print(users)
+  if request.method == 'POST':
+    username = request.form['username']
+    password = request.form['old_password']
+    new_password = request.form['new_password']
+
+    if password == users.get(username):
+      if check(new_password):
+        users[username] = new_password
+        return redirect(url_for('landing_page'))
+      else:
+        error = reason(new_password)
+    else:
+      error = "Old Password is wrong."
+  return render_template('edit_user.html', error=error)
+
 
 
 
