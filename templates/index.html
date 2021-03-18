@@ -16,9 +16,9 @@
   </head>
   <body>
     <div class="container">
-      <h1 align="center">Welcome to the Wishlist!</h2>
+      <h1 style="text-align:center">Welcome to the Wishlist!</h2>
       <br>
-		<div align="center">
+		<div style="text-align:center">
 			<a href="/wishlist"><input style='padding: 4px' class="btn btn-default" type="submit" value="View Wishlist"></a>
 			<input style='padding: 4px' class="btn btn-default" type="submit" data-toggle="modal" data-target="#myModal" value="Edit Profile">
 		</div>
@@ -28,35 +28,38 @@
   <div class="modal-dialog">
 
     <!-- Modal content-->
-    <div class="modal-content" align="center">
-      <div class="modal-header" align="center">
+    <div class="modal-content" style="text-align:center">
+      <div class="modal-header" style="text-align:center">
         <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
-        <h4 align="center" class="modal-title">Edit Profile</h4>
+        <h4 style="text-align:center" class="modal-title">Edit Profile</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="text-align:center">
         <p>New Username</p>
         <input type="text" style='padding: 4px' placeholder="Username" name="username" value="{{
-          request.form.username }}">
+          request.form.username}}">
       </div>
-      <div>
+      <div style="text-align:center">
         <p>Current Password</p>
         <input type="password" style='padding: 4px' placeholder="Current Password" name="current_password" value="{{
-			  request.form.curent_password }}">
+			  request.form.curent_password}}">
       </div>
-      <div>
+      <div style="text-align:center">
         <p>New Password</p>
         <input type="password" style='padding: 4px' placeholder="New Password" name="new_password" value="{{
-			  request.form.new_password }}">
+			  request.form.new_password}}">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Save</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <input type="button" class="btn btn-default" data-dismiss="modal" value="Save"></input>
+        <input type="button" class="btn btn-default" data-dismiss="modal" value="Close"></input>
+        {% if error %}
+			    <p class="error"><strong>Error:</strong> {{ error }}
+			  {% endif %}
       </div>
     </div>
 
   </div>
 </div>
-		<div align="center">
+		<div style="text-align:center">
 			<a href="/login"><input style='padding: 4px' class="btn btn-default" type="submit" value="Sign out"></a>
 		</div>
     </div>

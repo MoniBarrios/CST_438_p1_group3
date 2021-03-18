@@ -122,9 +122,9 @@ def login():
         cur.execute(sql,{'username':name})
 
         rows = cur.fetchone()
-        if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
+        if request.form['username'] == 'admin' or request.form['password'] == 'admin': # if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
           return admin()
-        else: #request.form['username'] != 'admin' or request.form['password'] != 'admin':
+        else: #request.form['username'] == 'admin' or request.form['password'] == 'admin':
             for user in x:
                 if request.form['username'] == user:
                     if request.form['password'] == users.get(request.form['username']):
@@ -137,7 +137,20 @@ def login():
 
 @app.route('/landing-page', methods = ['GET', 'POST'])
 def landing_page():
-  return render_template('index.html')
+  error = None
+  print(users)
+  if request.method == 'POST':
+    username = request.form['username']
+    password = request.form['current_password']
+    new_password = request.form['new_password']
+
+    if password == users.get(username):
+      if check(new_password):
+        users[username] = new_password
+      else:
+        error = reason(password)
+
+  return render_template('index.html', error=error)
 
 
 
