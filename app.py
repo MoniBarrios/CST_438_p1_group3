@@ -2,7 +2,6 @@
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
-import pprint
 import mysql.connector
 
 # create the application object
@@ -115,13 +114,27 @@ def viewusers():
 @app.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
 
-    user = {
-        'username': 'antPerez',
-        'password': '$ky1234',
-        'hasList': True
-    }
+    sql = "SELECT * FROM user WHERE userID = %(userID)s"
+    cur.execute(sql, {'userID': user_id})
 
-    return user
+    
+
+    for user in cur:
+       
+
+        hasList = False
+
+        if (user[3]):
+            hasList = True
+
+        userInfo = {
+            'username': user[1],
+            'password': user[2],
+            'hasList': hasList
+        }
+
+
+    return userInfo
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -154,25 +167,38 @@ def login():
 @app.route('/wishlist', methods = ['GET', 'POST'])
 def wishlist():
 
-    # sql = "SELECT * FROM wishlist WHERE wishlistid = %(wishID)s"
-    # cur.execute(sql,{'wishID':})
+    sql = "SELECT * FROM item"
+    cur.execute(sql)
+    items = []
 
-    items = [
-        {
-            'id': 1,
-            'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
-            'name': 'mountains',
-            'description': 'beautiful mountains and lake of who knows where',
-            'links': 'google.com'
-        },
-        {
-            'id': 2,
-            'image': 'https://cdn1.matadornetwork.com/blogs/1/2019/10/seljalandsfoss-most-instagrammed-waterfalls-world-1200x855.jpg',
-            'name': 'waterfall',
-            'description': 'beautiful waterfall of unknown area',
-            'links': 'amazon.com'
+    for item in cur:
+        print(item)
+
+        temp = {
+            'id': item[0],
+            'name': item[1],
+            'description': item[2],
+            'image': item[3],
+            'links': "google.com"
         }
-    ]
+        items.append(temp)
+
+    # items = [
+    #     {
+    #         'id': 1,
+    #         'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
+    #         'name': 'mountains',
+    #         'description': 'beautiful mountains and lake of who knows where',
+    #         'links': 'google.com'
+    #     },
+    #     {
+    #         'id': 2,
+    #         'image': 'https://cdn1.matadornetwork.com/blogs/1/2019/10/seljalandsfoss-most-instagrammed-waterfalls-world-1200x855.jpg',
+    #         'name': 'waterfall',
+    #         'description': 'beautiful waterfall of unknown area',
+    #         'links': 'amazon.com'
+    #     }
+    # ]
 
     return render_template('listpage.html', wishlist = items)
 
@@ -184,18 +210,20 @@ def wishlist():
 @app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
 def edit_item(item_id):
 
-    # sql = "SELECT * FROM user WHERE username = %(username)s"
+    sql = "SELECT * FROM item WHERE itemID = %(itemID)s"
+    cur.execute(sql, {'itemID': item_id})
 
-
-    item = {
-            'id': '1',
-            'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
-            'name': 'mountains',
-            'description': 'beautiful mountains and lake of who knows where',
+    for item in cur:
+        itemInfo = {
+            'id': item[0],
+            'image': item[3],
+            'name': item[1],
+            'description': item[2],
             'links': 'google.com'
         }
 
-    return item
+
+    return itemInfo
 
 # start the server with the 'run()' method
 if __name__ == '__main__':
