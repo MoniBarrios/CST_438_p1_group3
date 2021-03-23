@@ -129,6 +129,7 @@ def edit_user(user_id):
 
     for user in cur:
        
+        print(user)
 
         hasList = False
 
@@ -136,6 +137,7 @@ def edit_user(user_id):
             hasList = True
 
         userInfo = {
+            'id': user[0],
             'username': user[1],
             'password': user[2],
             'hasList': hasList
@@ -143,6 +145,24 @@ def edit_user(user_id):
 
 
     return userInfo
+
+@app.route('/admin/save_user/<user_id>', methods=['GET', 'POST'])
+def save_user(user_id):
+
+    print(user_id)
+
+    sql = "UPDATE user SET username = %(userName)s, password = %(userPass)s WHERE userID = %(user_id)s"
+
+    userName = request.args.get('userName')
+    userPass = request.args.get('userPass')
+
+    cur.execute(sql, {'user_id': user_id, 'userName': userName, 'userPass': userPass})
+
+    x = {'result': 'Success'}
+
+    return x
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
