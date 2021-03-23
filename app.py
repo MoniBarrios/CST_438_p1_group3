@@ -149,8 +149,6 @@ def edit_user(user_id):
 @app.route('/admin/save_user/<user_id>', methods=['GET', 'POST'])
 def save_user(user_id):
 
-    print(user_id)
-
     sql = "UPDATE user SET username = %(userName)s, password = %(userPass)s WHERE userID = %(user_id)s"
 
     userName = request.args.get('userName')
