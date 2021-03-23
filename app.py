@@ -2,7 +2,6 @@
 
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
-import pprint
 import mysql.connector
 
 # create the application object
@@ -33,7 +32,6 @@ def check(password): #will check if password from user is valid
   
   return length and special
 
-
 def reason(password): #will tell you what you need to fix in password
   length = False
   special = False
@@ -52,6 +50,13 @@ def reason(password): #will tell you what you need to fix in password
   if not length:
     return "Password must be longer than 6 characters."
 
+def valid_username(username):
+  user = users.keys()
+  for x in user:
+    if x == username:
+      return False
+  return True
+
 # use decorators to link the function to a url
 @app.route('/', methods=['GET', 'POST'])
 def create_account():
@@ -61,9 +66,11 @@ def create_account():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if check(password) :
+        if check(password) and valid_username(username):
             users[username] = password
             return redirect(url_for('login'))
+        elif not valid_username(username):
+          error = "Username already exists."
         else:
             error = reason(password)
     return render_template('create_account.html', error=error)
@@ -115,13 +122,45 @@ def viewusers():
 @app.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
 
-    user = {
-        'username': 'antPerez',
-        'password': '$ky1234',
-        'hasList': True
-    }
+    sql = "SELECT * FROM user WHERE userID = %(userID)s"
+    cur.execute(sql, {'userID': user_id})
 
-    return user
+    
+
+    for user in cur:
+       
+        print(user)
+
+        hasList = False
+
+        if (user[3]):
+            hasList = True
+
+        userInfo = {
+            'id': user[0],
+            'username': user[1],
+            'password': user[2],
+            'hasList': hasList
+        }
+
+
+    return userInfo
+
+@app.route('/admin/save_user/<user_id>', methods=['GET', 'POST'])
+def save_user(user_id):
+
+    sql = "UPDATE user SET username = %(userName)s, password = %(userPass)s WHERE userID = %(user_id)s"
+
+    userName = request.args.get('userName')
+    userPass = request.args.get('userPass')
+
+    cur.execute(sql, {'user_id': user_id, 'userName': userName, 'userPass': userPass})
+
+    x = {'result': 'Success'}
+
+    return x
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -137,42 +176,74 @@ def login():
         cur.execute(sql,{'username':name})
 
         rows = cur.fetchone()
-        if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
+        if request.form['username'] == 'admin' or request.form['password'] == 'admin': # if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
           return admin()
-        else: #request.form['username'] != 'admin' or request.form['password'] != 'admin':
+        else: #request.form['username'] == 'admin' or request.form['password'] == 'admin':
             for user in x:
                 if request.form['username'] == user:
                     if request.form['password'] == users.get(request.form['username']):
-                        return redirect(url_for('wishlist'))
+                        return redirect(url_for('landing_page'))
                     else:
                         error = "Wrong password."
                 else:
                     error = "No user with that username exists"
     return render_template('login.html', error=error)
 
+@app.route('/landing-page', methods = ['GET', 'POST'])
+def landing_page():
+  error = None
+  print(users)
+  if request.method == 'POST':
+    username = request.form['username']
+    password = request.form['current_password']
+    new_password = request.form['new_password']
+
+    if password == users.get(username):
+      if check(new_password):
+        users[username] = new_password
+      else:
+        error = reason(password)
+
+  return render_template('index.html', error=error)
+
+
+
 
 @app.route('/wishlist', methods = ['GET', 'POST'])
 def wishlist():
 
-    # sql = "SELECT * FROM wishlist WHERE wishlistid = %(wishID)s"
-    # cur.execute(sql,{'wishID':})
+    sql = "SELECT * FROM item"
+    cur.execute(sql)
+    items = []
 
-    items = [
-        {
-            'id': 1,
-            'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
-            'name': 'mountains',
-            'description': 'beautiful mountains and lake of who knows where',
-            'links': 'google.com'
-        },
-        {
-            'id': 2,
-            'image': 'https://cdn1.matadornetwork.com/blogs/1/2019/10/seljalandsfoss-most-instagrammed-waterfalls-world-1200x855.jpg',
-            'name': 'waterfall',
-            'description': 'beautiful waterfall of unknown area',
-            'links': 'amazon.com'
+    for item in cur:
+        print(item)
+
+        temp = {
+            'id': item[0],
+            'name': item[1],
+            'description': item[2],
+            'image': item[3],
+            'links': "google.com"
         }
-    ]
+        items.append(temp)
+
+    # items = [
+    #     {
+    #         'id': 1,
+    #         'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
+    #         'name': 'mountains',
+    #         'description': 'beautiful mountains and lake of who knows where',
+    #         'links': 'google.com'
+    #     },
+    #     {
+    #         'id': 2,
+    #         'image': 'https://cdn1.matadornetwork.com/blogs/1/2019/10/seljalandsfoss-most-instagrammed-waterfalls-world-1200x855.jpg',
+    #         'name': 'waterfall',
+    #         'description': 'beautiful waterfall of unknown area',
+    #         'links': 'amazon.com'
+    #     }
+    # ]
 
     return render_template('listpage.html', wishlist = items)
 
@@ -184,18 +255,20 @@ def wishlist():
 @app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
 def edit_item(item_id):
 
-    # sql = "SELECT * FROM user WHERE username = %(username)s"
+    sql = "SELECT * FROM item WHERE itemID = %(itemID)s"
+    cur.execute(sql, {'itemID': item_id})
 
-
-    item = {
-            'id': '1',
-            'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
-            'name': 'mountains',
-            'description': 'beautiful mountains and lake of who knows where',
+    for item in cur:
+        itemInfo = {
+            'id': item[0],
+            'image': item[3],
+            'name': item[1],
+            'description': item[2],
             'links': 'google.com'
         }
 
-    return item
+
+    return itemInfo
 
 # start the server with the 'run()' method
 if __name__ == '__main__':

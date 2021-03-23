@@ -81,7 +81,7 @@
               </div>
               <div class="modal-footer">
                 <button id='cancelUserEdit' type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-info">Save</button>
+                <button id='saveUserEdit' type="button" class="btn saveUserEdit btn-info">Save</button>
               </div>
             </div>
           </div>
@@ -105,8 +105,11 @@
                 contentType: "application/json",
                 success: function(data, status) {
                     console.log(data)
+                    var userId = String(data.id)
+
                     $('#username').val(data.username)
                     $('#password').val(data.password)
+                    $('#saveUserEdit').attr('name', userId)
                     $('#editUserModal').modal('toggle')
                 },
                 error: function(xhr, status, error) {
@@ -128,6 +131,35 @@
         $('#cancelUserEdit').on('click', function(e) {
           e.preventDefault()
           $('#editUserModal').modal('toggle')
+        })
+
+        $('#saveUserEdit').on('click', function(e){
+          e.preventDefault()
+          var user_id = $(this).attr('name');
+          var user_name = $('#username').val()
+          var user_pass = $('#password').val()
+
+          $.ajax({
+                type: "GET",
+                url: `/admin/save_user/${user_id}`,
+                dataType: "json",
+                data: {'userName': user_name.toString(), 
+                        'userPass': user_pass.toString()},
+                contentType: "application/json",
+                success: function(data, status) {
+                    console.log(data)
+                    alert('Successfully saved changes')
+                    $('#editUserModal').modal('toggle')
+                    location.reload()
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                },
+                complete: function(data, status) { //optional, used for debugging purposes
+                    //console.log(status);
+                }
+            });
+
         })
 
       })
