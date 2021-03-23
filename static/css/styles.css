@@ -1,0 +1,207 @@
+/***** Nav Bar ******/
+
+ .nav_bar {
+    margin: 0 auto;
+    background-color:aliceblue;
+    opacity: 0.9;
+    width:60%;
+    border-radius:20px;
+  }
+  
+  .nav_bar ul {
+    text-align: center;
+    color: black;
+  }
+  
+  .nav_bar ul li {
+    color:black;
+    font-size:20px;
+    display: inline-block;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .nav_bar a:link {
+    color:black;
+  }
+  
+  .nav_bar a:visited {
+    color:black;
+  }
+  
+  .nav_bar a:hover {
+    color: yellow;
+  }
+  
+  .nav_bar .current {
+    background-color: blue
+  }
+
+  body {
+    align-content:  center; 
+    background-size: cover;
+    position: center;
+    background-attachment: fixed;
+    background-position: 50% 50%;
+  }
+  
+  
+  /* .btn{
+    color: steelblue;
+    border-style: outset;
+    border-color: white;
+    border-width: 2px;
+    background-color:white;
+    border-radius: 25px;
+    border: 2px solid steelblue;
+    padding: 20px;
+    background-color: aliceblue; 
+  } */
+
+  .btn{
+    color: rgb(131, 136, 139);
+    border-style: outset;
+    border-color: rgb(179, 39, 39);
+    border-width: 2px;
+    background-color:white;
+    border-radius: 25px;
+    border: 2px solid rgb(251, 253, 255);
+    padding: 20px;
+    background-color: rgb(131, 136, 139); 
+  }
+
+  .editButton{
+    color: rgb(245, 206, 35);
+    border-style: outset;
+    border-color: rgb(243, 150, 43);
+    border-width: 2px;
+    background-color:white;
+    border-radius: 25px;
+    border: 2px;
+  }
+  
+  /* button:hover {
+    background-color:azure;
+  } */
+  
+  /* .btn{
+      color: steelblue;
+    border-style: outset;
+    border-color: white;
+    border-width: 2px;
+    background-color:white;
+    border-radius: 25px;
+    border: 2px solid steelblue;
+    padding: 20px;
+      background-color: aliceblue; 
+    font-family: 'Rajdhani', sans-serif; 
+  } */
+  
+/*   
+  th, td{
+    padding:2px;
+    border:1px solid grey;
+    opacity:0.9;
+  } */
+
+.etc{
+      background-color: aliceblue;
+      color: rgb(6, 42, 109);
+      font-family: 'Poiret One', cursive; 
+      font-size: 100px;
+      opacity:.9; 
+      height:140px;
+      text-align: center;
+  }
+  
+  h1,h2{
+      font-family: 'Poiret One', cursive; 
+      color: rgb(6, 42, 109);
+      background-color:aliceblue; 
+      opacity: .9; 
+      text-align: center;
+  }
+  
+  footer{
+      font-family: 'Rajdhani', sans-serif; 
+      background-color:aliceblue; 
+      opacity: .9; 
+  }
+  
+  .row {
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    -ms-flex-wrap: wrap; /* IE10 */
+    flex-wrap: wrap;
+    margin: 0 -16px;
+  }
+  
+  .col-25 {
+    -ms-flex: 25%; /* IE10 */
+    flex: 25%;
+  }
+  
+  .col-50 {
+    -ms-flex: 50%; /* IE10 */
+    flex: 50%;
+  }
+  
+  .col-75 {
+    -ms-flex: 75%; /* IE10 */
+    flex: 75%;
+  }
+  
+  .col-25,
+  .col-50,
+  .col-75 {
+    padding: 0 16px;
+  }
+  
+  /* .container {
+    background-color: aliceblue;
+    padding: 5px 20px 15px 20px;
+    border: 1px solid aliceblue;
+    border-radius: 3px;
+      font-family: 'Rajdhani', sans-serif; 
+  } */
+  
+  input[type=text] {
+    margin-top:5px;
+    margin-bottom: 50px;
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  label {
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  .icon-container {
+    margin-bottom: 20px;
+    padding: 7px 0;
+    font-size: 24px;
+  }
+  
+  /* #total{
+    text-align: right;
+    color: black;
+  } */
+  
+  @media (max-width: 800px) {
+    .row {
+      flex-direction: column-reverse;
+    }
+    .col-25 {
+      margin-bottom: 20px;
+    }
+  }
+  
+  #seinfeldQuote {
+    margin: 0 auto;
+    display:flex;
+    justify-content:center;
+    width:70%;
+    font-size:15px;
+  }
