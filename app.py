@@ -18,7 +18,7 @@ db = mysql.connector.connect(
   database="hsmokzpr63mftd01"
  )
 
-cur = db.cursor()
+cur = db.cursor(buffered=True)
 
 def check(password): #will check if password from user is valid
   length = False
@@ -52,10 +52,20 @@ def reason(password): #will tell you what you need to fix in password
 
 def valid_username(username):
   user = users.keys()
-  for x in user:
-    if x == username:
+  sql = "SELECT * FROM user WHERE username = %(username)s"
+  cur.execute(sql,{'username':username})
+  for x in cur:
+    if x[1] == username:
       return False
   return True
+
+def valid_password(username, password):
+  sql = "SELECT * FROM user WHERE username = %(username)s" 
+  cur.execute(sql,{'username':username})
+  for user in cur:
+    if user[2] == password:
+      return True
+  return False
 
 # use decorators to link the function to a url
 @app.route('/', methods=['GET', 'POST'])
@@ -67,12 +77,15 @@ def create_account():
         username = request.form['username']
         password = request.form['password']
         if check(password) and valid_username(username):
-            users[username] = password
-            return redirect(url_for('login'))
+          sql = "INSERT INTO `user` (`username`, `password`) VALUES (%(username)s, %(password)s);"
+          cur.execute(sql,{"username":username, "password":password})
+          db.commit()
+          users[username] = password
+          return redirect(url_for('login'))
         elif not valid_username(username):
           error = "Username already exists."
         else:
-            error = reason(password)
+          error = reason(password)
     return render_template('create_account.html', error=error)
 
 @app.route('/admin')
@@ -155,7 +168,7 @@ def save_user(user_id):
     userPass = request.args.get('userPass')
 
     cur.execute(sql, {'user_id': user_id, 'userName': userName, 'userPass': userPass})
-
+    db.commit()
     x = {'result': 'Success'}
 
     return x
@@ -171,40 +184,40 @@ def login():
     print(users)
     x = users.keys()
     if request.method == 'POST':
-        sql = "SELECT * FROM user WHERE username = %(username)s"
+        sql = "SELECT * FROM user WHERE username = %(username)s" 
         name = request.form['username']
         cur.execute(sql,{'username':name})
 
-        rows = cur.fetchone()
-        if request.form['username'] == 'admin' or request.form['password'] == 'admin': # if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
+        # rows = cur.fetchone()
+        if request.form['username'] == 'admin' and request.form['password'] == 'admin': # if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
           return admin()
         else: #request.form['username'] == 'admin' or request.form['password'] == 'admin':
-            for user in x:
-                if request.form['username'] == user:
-                    if request.form['password'] == users.get(request.form['username']):
-                        return redirect(url_for('landing_page'))
-                    else:
-                        error = "Wrong password."
-                else:
-                    error = "No user with that username exists"
+            for user in cur:
+              print(user)
+              if request.form['username'] == user[1]:
+                  if request.form['password'] == user[2]: #request.form['password'] == users.get(request.form['username']):
+                      return redirect(url_for('landing_page'))
+                  else:
+                      error = "Wrong password."
+              else:
+                  error = "No user with that username exists"
     return render_template('login.html', error=error)
 
 @app.route('/landing-page', methods = ['GET', 'POST'])
 def landing_page():
-  error = None
-  print(users)
-  if request.method == 'POST':
-    username = request.form['username']
-    password = request.form['current_password']
-    new_password = request.form['new_password']
+  
+  # if request.method == 'POST':
+  #   username = request.form['username']
+  #   password = request.form['current_password']
+  #   new_password = request.form['new_password']
 
-    if password == users.get(username):
-      if check(new_password):
-        users[username] = new_password
-      else:
-        error = reason(password)
+  #   if password == users.get(username):
+  #     if check(new_password):
+  #       users[username] = new_password
+  #     else:
+  #       error = reason(password)
 
-  return render_template('index.html', error=error)
+  return render_template('index.html')
 
 @app.route('/user/edit_user', methods = ['GET', 'POST'])
 def user_edit_user():
@@ -215,8 +228,11 @@ def user_edit_user():
     password = request.form['old_password']
     new_password = request.form['new_password']
 
-    if password == users.get(username):
+    if valid_password(username, password):
       if check(new_password):
+        sql = "UPDATE user SET password = %(userPass)s WHERE username = %(userName)s"
+        cur.execute(sql, {'userPass': new_password, 'userName':username})
+        db.commit()
         users[username] = new_password
         return redirect(url_for('landing_page'))
       else:
