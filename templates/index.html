@@ -16,51 +16,14 @@
   </head>
   <body>
     <div class="container">
-      <h1 style="text-align:center">Welcome to the Wishlist!</h2>
+      <h1 style="text-align:center"><strong>Welcome to the Wishlist!</strong></h2>
       <br>
 		<div style="text-align:center">
-			<a href="/wishlist"><input style='padding: 4px' class="btn btn-default" type="submit" value="View Wishlist"></a>
-			<a href="/user/edit_user"><input style='padding: 4px' class="btn btn-default" type="submit" value="Edit Profile"></a>
+			<a href="/wishlist"><input style='padding: 4px' class="btn btn-info" type="button" value="View Wishlist"></a>
+			<a href="/user/edit_user"><input style='padding: 4px' class="btn btn-warning" type="button" value="Edit Profile"></a>
 		</div>
-
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content" style="text-align:center">
-      <div class="modal-header" style="text-align:center">
-        <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
-        <h4 style="text-align:center" class="modal-title">Edit Profile</h4>
-      </div>
-      <div class="modal-body" style="text-align:center">
-        <p>New Username</p>
-        <input type="text" style='padding: 4px' placeholder="Username" name="username" value="{{
-          request.form.username}}">
-      </div>
-      <div style="text-align:center">
-        <p>Current Password</p>
-        <input type="password" style='padding: 4px' placeholder="Current Password" name="current_password" value="{{
-			  request.form.curent_password}}">
-      </div>
-      <div style="text-align:center">
-        <p>New Password</p>
-        <input type="password" style='padding: 4px' placeholder="New Password" name="new_password" value="{{
-			  request.form.new_password}}">
-      </div>
-      <div class="modal-footer">
-        <input type="button" class="btn btn-default" data-dismiss="modal" value="Save"></input>
-        <input type="button" class="btn btn-default" data-dismiss="modal" value="Close"></input>
-        {% if error %}
-			    <p class="error"><strong>Error:</strong> {{ error }}
-			  {% endif %}
-      </div>
-    </div>
-
-  </div>
-</div>
 		<div style="text-align:center">
-			<a href="/login"><input style='padding: 4px' class="btn btn-default" type="submit" value="Sign out"></a>
+			<a href="/login"><input style='padding: 4px' class="btn btn-danger" type="submit" value="Sign out"></a>
 		</div>
     </div>
   </body>
