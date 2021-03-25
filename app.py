@@ -138,8 +138,6 @@ def edit_user(user_id):
     sql = "SELECT * FROM user WHERE userID = %(userID)s"
     cur.execute(sql, {'userID': user_id})
 
-    
-
     for user in cur:
        
         print(user)
@@ -156,9 +154,17 @@ def edit_user(user_id):
             'hasList': hasList
         }
 
-
     return userInfo
 
+@app.route('/admin/delete_user/<user_id>', methods=['GET','POST'])
+def deleteUser(user_id):
+
+  sql ="DELETE FROM user WHERE userID = %(userID)s"
+  cur.execute(sql, {'userID':user_id}) 
+  db.commit()
+
+  return "Success"
+    
 @app.route('/admin/save_user/<user_id>', methods=['GET', 'POST'])
 def save_user(user_id):
 
