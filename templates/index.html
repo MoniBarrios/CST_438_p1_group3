@@ -1,27 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Landing Page Story</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
-	  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-	  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js" integrity="sha384-KsvD1yqQ1/1+IA7gi3P0tyJcT3vR+NdBTt13hSJ2lnve8agRGXTTyNaBYmCR/Nwi" crossorigin="anonymous"></script>
-	  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
    
+    <!-- CSS -->
+    <!-- <link href="static/bootstrap.min.css" rel="stylesheet" media="screen"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">	
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+	
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js" integrity="sha384-KsvD1yqQ1/1+IA7gi3P0tyJcT3vR+NdBTt13hSJ2lnve8agRGXTTyNaBYmCR/Nwi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <link href="/static/css/styles.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    
     <div class="container">
-      <h1 style="text-align:center"><strong>Welcome to the Wishlist!</strong></h2>
+      <h1>Welcome to Wishlist!</h1>
       <br>
-		<div style="text-align:center">
-			<a href="/wishlist"><input style='padding: 4px' class="btn btn-info" type="button" value="View Wishlist"></a>
-			<a href="/user/edit_user"><input style='padding: 4px' class="btn btn-warning" type="button" value="Edit Profile"></a>
-		</div>
+
+
+	  <div style="text-align:center">
+		<a href="/wishlist"><input  class="btn btn-default" type="submit" value="View Wishlist"></a>
+		<input class="btn btn-default" type="submit" data-toggle="modal" data-target="#myModal" value="Edit Profile">
+	  </div>
+    </div>
+      <br>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" style="text-align:center">
+      <div class="modal-header" style="text-align:center">
+        <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+        <h4 style="text-align:center" class="modal-title">Edit Profile</h4>
+      </div>
+      <div class="modal-body" style="text-align:center">
+        <p>New Username</p>
+        <input type="text" style='padding: 4px' placeholder="Username" name="username" value="{{
+          request.form.username}}">
+      </div>
+      <div style="text-align:center">
+        <p>Current Password</p>
+        <input type="password" style='padding: 4px' placeholder="Current Password" name="current_password" value="{{
+			  request.form.curent_password}}">
+      </div>
+      <div style="text-align:center">
+        <p>New Password</p>
+        <input type="password" style='padding: 4px' placeholder="New Password" name="new_password" value="{{
+			  request.form.new_password}}">
+      </div>
+      <div class="modal-footer">
+        <input type="button" class="btn btn-default" data-dismiss="modal" value="Save"></input>
+        <input type="button" class="btn btn-default" data-dismiss="modal" value="Close"></input>
+        {% if error %}
+			    <p class="error"><strong>Error:</strong> {{ error }}
+			  {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
 		<div style="text-align:center">
 			<a href="/login"><input style='padding: 4px' class="btn btn-danger" type="submit" value="Sign out"></a>
 		</div>
