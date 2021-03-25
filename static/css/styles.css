@@ -1,6 +1,6 @@
 /***** Nav Bar ******/
 
- .nav_bar {
+ .nav_bar{
     margin: 0 auto;
     background-color:aliceblue;
     opacity: 0.9;
@@ -8,12 +8,12 @@
     border-radius:20px;
   }
   
-  .nav_bar ul {
+  .nav_bar ul{
     text-align: center;
     color: black;
   }
   
-  .nav_bar ul li {
+  .nav_bar ul li{
     color:black;
     font-size:20px;
     display: inline-block;
@@ -21,19 +21,19 @@
     padding: 20px;
   }
   
-  .nav_bar a:link {
+  .nav_bar a:link{
     color:black;
   }
   
-  .nav_bar a:visited {
+  .nav_bar a:visited{
     color:black;
   }
   
-  .nav_bar a:hover {
+  .nav_bar a:hover{
     color: yellow;
   }
   
-  .nav_bar .current {
+  .nav_bar .current{
     background-color: blue
   }
 
@@ -46,7 +46,27 @@
   }
   
   
-  /* .btn{
+  .btn{
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 25px;
+    border: 2px solid;
+    padding: 20px;
+  }
+
+  .adminbtn{
+    color: rgb(131, 136, 139);
+    border-style: outset;
+    border-color: white;
+    border-width: 2px;
+    background-color:white;
+    border-radius: 25px;
+    border: 2px solid rgb(251, 253, 255);
+    padding: 20px;
+    background-color: aliceblue; 
+  }
+
+  .userbtn{
     color: steelblue;
     border-style: outset;
     border-color: white;
@@ -56,18 +76,6 @@
     border: 2px solid steelblue;
     padding: 20px;
     background-color: aliceblue; 
-  } */
-
-  .btn{
-    color: rgb(131, 136, 139);
-    border-style: outset;
-    border-color: rgb(179, 39, 39);
-    border-width: 2px;
-    background-color:white;
-    border-radius: 25px;
-    border: 2px solid rgb(251, 253, 255);
-    padding: 20px;
-    background-color: rgb(131, 136, 139); 
   }
 
   .editButton{
@@ -78,6 +86,13 @@
     background-color:white;
     border-radius: 25px;
     border: 2px;
+  }
+
+  .bg-red{
+    color:rgb(211, 36, 36);
+    border-color: rgb(243, 150, 43); 
+
+
   }
   
   /* button:hover {
@@ -117,7 +132,6 @@
   h1,h2{
       font-family: 'Poiret One', cursive; 
       color: rgb(6, 42, 109);
-      background-color:aliceblue; 
       opacity: .9; 
       text-align: center;
   }

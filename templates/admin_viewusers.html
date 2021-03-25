@@ -18,14 +18,14 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     
-      <!-- <link href="/static/css/styles.css" rel="stylesheet" type="text/css" /> -->
+      <link href="/static/css/styles.css" rel="stylesheet" type="text/css" /> -->
  
       <!-- <meta name="viewport" content="width=device-width, initial-scale=1">  -->
   </head>
     <body class="bg-dark">
-        <h1 style="text-align:center" class="text-white bg-dark">Users</h1>
+        <h1 class="text-white bg-dark">Users</h1>
         <div style="text-align:right">
-          <a class="btn btn-primary text-white" href="/admin" role="button">HOME</a>
+          <a class="btn bg-dark text-white" href="/admin" role="button">HOME</a>
         </div>
         <br>
         <table class="table table-dark table-hover table-bordered table-striped">
@@ -48,10 +48,10 @@
               <td>Jacob</td>
               <td>Thornton</td>
               <td>
-                <button id="example" type="button" class="btn text-white editUserButton btn-warning" data-toggle="modal" data-target="#editModal">Edit</button>
+                <button id="example" type="button" class="btn text-white editButton" data-toggle="modal" data-target="#editModal">Edit</button>
               </td>
               <td>
-                <button type="button" class="btn deleteUserButton btn-danger">Delete</button>
+                <button type="button" class="btn bg-red">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -81,7 +81,7 @@
               </div>
               <div class="modal-footer">
                 <button id='cancelUserEdit' type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button id='saveUserEdit' type="button" class="btn saveUserEdit btn-info">Save</button>
+                <button type="button" class="btn text-white">Save</button>
               </div>
             </div>
           </div>
@@ -105,11 +105,8 @@
                 contentType: "application/json",
                 success: function(data, status) {
                     console.log(data)
-                    var userId = String(data.id)
-
                     $('#username').val(data.username)
                     $('#password').val(data.password)
-                    $('#saveUserEdit').attr('name', userId)
                     $('#editUserModal').modal('toggle')
                 },
                 error: function(xhr, status, error) {
@@ -131,35 +128,6 @@
         $('#cancelUserEdit').on('click', function(e) {
           e.preventDefault()
           $('#editUserModal').modal('toggle')
-        })
-
-        $('#saveUserEdit').on('click', function(e){
-          e.preventDefault()
-          var user_id = $(this).attr('name');
-          var user_name = $('#username').val()
-          var user_pass = $('#password').val()
-
-          $.ajax({
-                type: "GET",
-                url: `/admin/save_user/${user_id}`,
-                dataType: "json",
-                data: {'userName': user_name.toString(), 
-                        'userPass': user_pass.toString()},
-                contentType: "application/json",
-                success: function(data, status) {
-                    console.log(data)
-                    alert('Successfully saved changes')
-                    $('#editUserModal').modal('toggle')
-                    location.reload()
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                },
-                complete: function(data, status) { //optional, used for debugging purposes
-                    //console.log(status);
-                }
-            });
-
         })
 
       })

@@ -21,7 +21,7 @@
 
   <body class="text-center">
 	<h1 class="etc"> Wishlist </h1>
-    <div class="container">
+    <div style="background-color: aliceblue" class="container">
 	  <br>
     <div class="container">
       <h1 style="text-align:center">Create Account</h1>
@@ -37,7 +37,7 @@
 	  </div>
 	  <div style="text-align:center"></div>
 	  <br>
-		<input  class="btn" type="submit" value="Create Account">
+		<input  class="btn userbtn" type="submit" value="Create Account">
 			{% if error %}
 			<p class="error"><strong>Error:</strong> {{ error }}
 			{% endif %}
@@ -46,6 +46,7 @@
 		<div style="text-align:center">
 			<br>
 			<p>Already have an account? <a href='/login'>Sign in</a></p>
+			<br>
 		</div>
 		</form>
     </div>
