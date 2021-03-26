@@ -252,14 +252,13 @@ def wishlist():
     items = []
 
     for item in cur:
-        print(item)
 
         temp = {
             'id': item[0],
             'name': item[1],
             'description': item[2],
             'image': item[3],
-            'links': "google.com"
+            'link': item[4]
         }
         items.append(temp)
 
@@ -299,11 +298,28 @@ def edit_item(item_id):
             'image': item[3],
             'name': item[1],
             'description': item[2],
-            'links': 'google.com'
+            'link': item[4]
         }
 
 
     return itemInfo
+
+@app.route('/add_item', methods = ['GET', 'POST'])
+def add_item():
+
+    sql = "INSERT INTO `item` (`name`, `description`, `ImgUrl`, `itemLink`) VALUES (%(iName)s, %(iDesc)s, %(iUrl)s, %(iLink)s)"
+    iUrl = request.args.get('addImage')
+    iName = request.args.get('addName')
+    iDesc = request.args.get('addDesc')
+    iLink = request.args.get('addLink')     
+    cur.execute(sql, {"iName": iName, "iDesc": iDesc, "iUrl": iUrl, 'iLink': iLink})
+
+    db.commit()
+
+    y = {'response': 'success'}
+
+    return y
+
 
 # start the server with the 'run()' method
 if __name__ == '__main__':
