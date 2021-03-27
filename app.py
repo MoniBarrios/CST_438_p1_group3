@@ -289,6 +289,22 @@ def edit_item(item_id):
 
     return itemInfo
 
+@app.route('/save_item/<item_id>', methods = ['GET', 'POST'])
+def save_item(item_id):
+
+    sql = "UPDATE item SET name = %(newName)s, description = %(newDesc)s, ImgUrl = %(newImage)s, itemLink = %(newLink)s WHERE (itemID = %(itemID)s)"
+    newImage = request.args.get('newImage')    
+    newName = request.args.get('newName')
+    newDesc = request.args.get('newDesc')
+    newLink = request.args.get('newLink')    
+    cur.execute(sql, {'itemID': item_id, 'newName': newName, 'newImage': newImage, 'newDesc': newDesc, 'newLink': newLink})
+
+    db.commit()
+
+    z = {'response': 'success'}
+
+    return z
+
 @app.route('/add_item', methods = ['GET', 'POST'])
 def add_item():
 

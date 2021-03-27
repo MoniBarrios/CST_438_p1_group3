@@ -155,6 +155,7 @@
                     $('#productName').val(data.name)
                     $('#description').val(data.description)
                     $('#link').val(data.link)
+                    $('#saveEdit').attr('name', data.id)
                     $('#editModal').modal('toggle')
                 },
                 error: function(xhr, status, error) {
@@ -180,6 +181,36 @@
 
         $('#saveEdit').on('click', function(e){
 
+          var item_id = $(this).attr('name')
+          var newImage = $('#imageURL').val()
+          var newName = $('#productName').val()
+          var newDesc = $('#description').val()
+          var newLink = $('#link').val()
+
+          $.ajax({
+
+            type: "GET",
+            url: `/save_item/${item_id}`,
+            dataType: "json",
+            contentType: "application/json",
+            data:{
+              "newImage": newImage.toString(),
+              "newName": newName.toString(),
+              "newDesc": newDesc.toString(),
+              "newLink": newLink.toString()
+            },
+            success: function(data, status) {
+                $('#editModal').modal('toggle')
+                location.reload()
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            },
+            complete: function(data, status) { //optional, used for debugging purposes
+                //console.log(status);
+            }
+          });
+
         })
 
         $('#addItem').on('click', function(e){
@@ -204,32 +235,30 @@
           var addDesc = $('#addDescription').val()
           var addLink = $('#addLink').val()
 
-          console.log(addImage)
-
           $.ajax({
 
-                type: "GET",
-                url: `/add_item`,
-                dataType: "json",
-                contentType: "application/json",
-                data:{
-                  "addImage": addImage.toString(),
-                  "addName": addName.toString(),
-                  "addDesc": addDesc.toString(),
-                  "addLink": addLink.toString()
-                },
-                success: function(data, status) {
-                    console.log(data)
-                    $('#addItemModal').modal('toggle')
-                    location.reload()
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                },
-                complete: function(data, status) { //optional, used for debugging purposes
-                    //console.log(status);
-                }
-            });
+            type: "GET",
+            url: `/add_item`,
+            dataType: "json",
+            contentType: "application/json",
+            data:{
+              "addImage": addImage.toString(),
+              "addName": addName.toString(),
+              "addDesc": addDesc.toString(),
+              "addLink": addLink.toString()
+            },
+            success: function(data, status) {
+                $('#addItemModal').modal('toggle')
+                location.reload()
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            },
+            complete: function(data, status) { //optional, used for debugging purposes
+                //console.log(status);
+            }
+          });
+
         })
 
       })
