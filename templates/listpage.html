@@ -34,15 +34,20 @@
               <th scope="col">Product</th>
               <th scope="col">Description</th>
               <th scope="col">Link</th>
-              <th scope="col">Edit</th>
+              <!-- <th scope="col">Edit</th> -->
               <th scope="col">Remove</th>
             </tr>
           </thead>
           <tbody>
-            {% for item in wishlist %}
+            {% if wishlistExists %}
+              {% for item in wishlist %}
               {% include '_list.html' %}
 
-            {% endfor %}
+              {% endfor %}
+            {% else %}
+            <td>No Items in Wishlist</td>
+            {% endif %}
+            
             <!-- <tr>
               <th scope="row">2</th>
               <td>Jacob</td>
@@ -59,7 +64,7 @@
         </table>
 
         <!-- Edit Modal -->
-        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
@@ -94,7 +99,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
 
         <!-- Add Item Modal -->
@@ -140,34 +145,34 @@
     <script>
       $(document).ready(function(){
 
-        $('.editButton').on('click', function(e) {
-          e.preventDefault()
+        // $('.editButton').on('click', function(e) {
+        //   e.preventDefault()
 
-          var item_id = $(this).attr('id');
+        //   var item_id = $(this).attr('id');
 
-          $.ajax({
-                type: "GET",
-                url: `/edit_item/${item_id}`,
-                dataType: "json",
-                contentType: "application/json",
-                success: function(data, status) {
-                    $('#imageURL').val(data.image)
-                    $('#productName').val(data.name)
-                    $('#description').val(data.description)
-                    $('#link').val(data.link)
-                    $('#saveEdit').attr('name', data.id)
-                    $('#editModal').modal('toggle')
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                },
-                complete: function(data, status) { //optional, used for debugging purposes
-                    //console.log(status);
-                }
-            });
+        //   $.ajax({
+        //         type: "GET",
+        //         url: `/edit_item/${item_id}`,
+        //         dataType: "json",
+        //         contentType: "application/json",
+        //         success: function(data, status) {
+        //             $('#imageURL').val(data.image)
+        //             $('#productName').val(data.name)
+        //             $('#description').val(data.description)
+        //             $('#link').val(data.link)
+        //             $('#saveEdit').attr('name', data.id)
+        //             $('#editModal').modal('toggle')
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error(xhr.responseText);
+        //         },
+        //         complete: function(data, status) { //optional, used for debugging purposes
+        //             //console.log(status);
+        //         }
+        //     });
 
           
-        })
+        // })
 
         $('#exitModal').on('click', function(e) {
           e.preventDefault()
@@ -229,7 +234,7 @@
         })
 
         $('#saveItem').on('click', function(e){
-
+          var userID = "{{userID}}"
           var addImage = $('#addImageURL').val()
           var addName = $('#addProductName').val()
           var addDesc = $('#addDescription').val()
@@ -238,7 +243,7 @@
           $.ajax({
 
             type: "GET",
-            url: `/add_item`,
+            url: `/add_item/${userID}`,
             dataType: "json",
             contentType: "application/json",
             data:{
@@ -249,6 +254,7 @@
             },
             success: function(data, status) {
                 $('#addItemModal').modal('toggle')
+                alert(data.response)
                 location.reload()
             },
             error: function(xhr, status, error) {
