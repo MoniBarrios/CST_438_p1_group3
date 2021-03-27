@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Admin View Items</title>
+   
+    <!-- CSS -->
+    <!-- <link href="static/bootstrap.min.css" rel="stylesheet" media="screen"> -->
+    <link href="/static/css/styles.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">	
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    
+	
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js" integrity="sha384-KsvD1yqQ1/1+IA7gi3P0tyJcT3vR+NdBTt13hSJ2lnve8agRGXTTyNaBYmCR/Nwi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  </head>
+    <body class="bg-dark">
+        <h1 class="etc">Items</h1>
+        <div style="text-align:right">
+          <button id="addItem" type="button" class="btn addItem btn-success" data-toggle="modal" data-target="#addItemModal">Add Item</button>
+          <a class="btn btn-info" href="/admin" role="button">HOME</a>
+        </div>
+        <br>
+        <table class="table table-dark table-hover table-bordered table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Image</th>
+              <th scope="col">Product</th>
+              <th scope="col">Description</th>
+              <th scope="col">Link</th>
+              <th scope="col">Edit</th>
+              <th scope="col">Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in wishlist %}
+              {% include '_list.html' %}
+
+            {% endfor %}
+            <!-- <tr>
+              <th scope="row">2</th>
+              <td>Jacob</td>
+              <td>Thornton</td>
+              <td>@fat</td>
+              <td>
+                <button id="example" type="button" class="btn editButton btn-warning" data-toggle="modal" data-target="#editModal">Edit</button>
+              </td>
+              <td>
+                <button type="button" class="btn btn-danger">Remove</button>
+              </td>
+            </tr> -->
+          </tbody>
+        </table>
+
+        <!-- Edit Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Item Info</h5>
+                <button id='exitModal'type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                      <label for="imageURL">Image URL</label>
+                      <input type="text" class="form-control" id="imageURL" aria-describedby="imageHelp" placeholder="Enter image URL">
+                  </div>
+                  <div class="form-group">
+                      <label for="productName">Product Name</label>
+                      <input type="text" class="form-control" id="productName" aria-describedby="productHelp" placeholder="Enter name of product">
+                  </div>
+                  <div class="form-group">
+                      <label for="description">Description</label>
+                      <input type="text" class="form-control" id="description" aria-describedby="descriptionHelp" placeholder="Enter description of product">
+                  </div>
+                  <div class="form-group">
+                      <label for="link">Link</label>
+                      <input type="text" class="form-control" id="link" aria-describedby="linkHelp" placeholder="Enter link of product"></input>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button id='cancelEdit' type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button id='saveEdit'type="button" class="btn btn-info">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Add Item Modal -->
+        <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Item Info</h5>
+                <button id='exitModal2'type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                      <label for="addImageURL">Image URL</label>
+                      <input type="text" class="form-control" id="addImageURL" aria-describedby="imageHelp" placeholder="Enter image URL">
+                  </div>
+                  <div class="form-group">
+                      <label for="addProductName">Product Name</label>
+                      <input type="text" class="form-control" id="addProductName" aria-describedby="productHelp" placeholder="Enter name of product">
+                  </div>
+                  <div class="form-group">
+                      <label for="addDescription">Description</label>
+                      <input type="text" class="form-control" id="addDescription" aria-describedby="descriptionHelp" placeholder="Enter description of product">
+                  </div>
+                  <div class="form-group">
+                      <label for="addLink">Link</label>
+                      <input type="text" class="form-control" id="addLink" aria-describedby="linkHelp" placeholder="Enter link of product"></input>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button id='cancelAddition' type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button id='saveItem'type="button" class="btn btn-info">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </body>
+
+    <script>
+      $(document).ready(function(){
+
+        $('.editButton').on('click', function(e) {
+          e.preventDefault()
+
+          var item_id = $(this).attr('id');
+
+          $.ajax({
+                type: "GET",
+                url: `/admin/edit_item/${item_id}`,
+                dataType: "json",
+                contentType: "application/json",
+                success: function(data, status) {
+                    $('#imageURL').val(data.image)
+                    $('#productName').val(data.name)
+                    $('#description').val(data.description)
+                    $('#link').val(data.link)
+                    $('#saveEdit').attr('name', data.id)
+                    $('#editModal').modal('toggle')
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                },
+                complete: function(data, status) { //optional, used for debugging purposes
+                    //console.log(status);
+                }
+            });
+
+          
+        })
+
+        $('#exitModal').on('click', function(e) {
+          e.preventDefault()
+          $('#editModal').modal('toggle')
+        })
+
+        $('#cancelEdit').on('click', function(e) {
+          e.preventDefault()
+          $('#editModal').modal('toggle')
+        })
+
+        $('#saveEdit').on('click', function(e){
+
+          var item_id = $(this).attr('name')
+          var newImage = $('#imageURL').val()
+          var newName = $('#productName').val()
+          var newDesc = $('#description').val()
+          var newLink = $('#link').val()
+
+          $.ajax({
+
+            type: "GET",
+            url: `/admin/save_item/${item_id}`,
+            dataType: "json",
+            contentType: "application/json",
+            data:{
+              "newImage": newImage.toString(),
+              "newName": newName.toString(),
+              "newDesc": newDesc.toString(),
+              "newLink": newLink.toString()
+            },
+            success: function(data, status) {
+                $('#editModal').modal('toggle')
+                location.reload()
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            },
+            complete: function(data, status) { //optional, used for debugging purposes
+                //console.log(status);
+            }
+          });
+
+        })
+
+        $('#addItem').on('click', function(e){
+          e.preventDefault()
+          $('#addItemModal').modal('toggle')
+        })
+
+        $('#exitModal2').on('click', function(e) {
+          e.preventDefault()
+          $('#addItemModal').modal('toggle')
+        })
+
+        $('#cancelAddition').on('click', function(e) {
+          e.preventDefault()
+          $('#addItemModal').modal('toggle')
+        })
+
+        $('#saveItem').on('click', function(e){
+
+          var addImage = $('#addImageURL').val()
+          var addName = $('#addProductName').val()
+          var addDesc = $('#addDescription').val()
+          var addLink = $('#addLink').val()
+
+          $.ajax({
+
+            type: "GET",
+            url: `/admin/add_item`,
+            dataType: "json",
+            contentType: "application/json",
+            data:{
+              "addImage": addImage.toString(),
+              "addName": addName.toString(),
+              "addDesc": addDesc.toString(),
+              "addLink": addLink.toString()
+            },
+            success: function(data, status) {
+                $('#addItemModal').modal('toggle')
+                location.reload()
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            },
+            complete: function(data, status) { //optional, used for debugging purposes
+                //console.log(status);
+            }
+          });
+
+        })
+
+      })
+    </script>
