@@ -125,8 +125,6 @@ def edit_user(user_id):
     sql = "SELECT * FROM user WHERE userID = %(userID)s"
     cur.execute(sql, {'userID': user_id})
 
-    
-
     for user in cur:
        
         print(user)
@@ -143,9 +141,36 @@ def edit_user(user_id):
             'hasList': hasList
         }
 
-
     return userInfo
 
+@app.route('/admin/delete_user/<user_id>', methods=['GET','POST'])
+def deleteUser(user_id):
+
+  sql = "SELECT * FROM user WHERE userID = %(userID)s"
+  cur.execute(sql, {'userID': user_id})
+
+  for user in cur:
+       
+        print(user)
+
+        hasList = False
+
+        if (user[3]):
+            hasList = True
+
+        userInfo = {
+            'id': user[0],
+            'username': user[1],
+            'password': user[2],
+            'hasList': hasList
+        }
+
+  sql ="DELETE FROM user WHERE userID = %(userID)s"
+  cur.execute(sql, {'userID':user_id}) 
+  db.commit()
+
+  return userInfo
+    
 @app.route('/admin/save_user/<user_id>', methods=['GET', 'POST'])
 def save_user(user_id):
 
@@ -198,7 +223,6 @@ def landing_page(userId):
 @app.route('/user/edit_user', methods = ['GET', 'POST'])
 def user_edit_user():
   error = None
-  print(users)
   if request.method == 'POST':
     username = request.form['username']
     password = request.form['old_password']
@@ -216,6 +240,22 @@ def user_edit_user():
     else:
       error = "Username or Password is wrong."
   return render_template('edit_user.html', error=error)
+
+
+@app.route('/user/delete_account/<user_name>', methods=['GET','POST'])
+def userDeleteAccount(user_name):
+
+    if valid_username(user_name):
+        sql ="DELETE FROM user WHERE username = %(username)s"
+        cur.execute(sql, {'username':user_name}) 
+        db.commit()
+
+        return redirect(url_for('landing_page'))
+
+    else:
+      error = "Confirm Username"
+
+    return render_template('edit_user.html', error=error)
 
 def hasItems(userId):
   sql = "SELECT * from user where userID = %(userId)s"
