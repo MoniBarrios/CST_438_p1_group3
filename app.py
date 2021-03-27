@@ -166,7 +166,7 @@ def login():
     username = None
     password = None
     
-    print(users)
+    # print(users)
     x = users.keys()
     if request.method == 'POST':
         sql = "SELECT * FROM user WHERE username = %(username)s" 
@@ -175,16 +175,20 @@ def login():
 
         if request.form['username'] == 'admin' and request.form['password'] == 'admin': #if its the admin that is signing in
           return admin()
-        else: 
-            for user in cur: 
-              print(user)
-              if request.form['username'] == user[1]: #checks that the username in database macthes with what the user typed in
-                  if request.form['password'] == user[2]: #if the username matches, it checks that the password to that username also matches
-                      return redirect(url_for('landing_page', userId = user[0]))
-                  else:
-                      error = "Wrong password."
-              else:
-                  error = "No user with that username exists"
+        else:
+          if cur:
+            error = "Username does't exist."
+            print(error)
+
+          for user in cur: 
+            print(user)
+            if name == user[1]: #checks that the username in database macthes with what the user typed in
+                if request.form['password'] == user[2]: #if the username matches, it checks that the password to that username also matches
+                  return redirect(url_for('landing_page'))
+                else:
+                  error = "Wrong password."
+                  print(error)
+
     return render_template('login.html', error=error)
 
 @app.route('/landing-page/<userId>', methods = ['GET', 'POST'])
@@ -210,7 +214,7 @@ def user_edit_user():
       else:
         error = reason(new_password)
     else:
-      error = "Old Password is wrong."
+      error = "Username or Password is wrong."
   return render_template('edit_user.html', error=error)
 
 def hasItems(userId):
