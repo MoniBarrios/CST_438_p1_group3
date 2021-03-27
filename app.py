@@ -248,67 +248,106 @@ def wishlist(userId):
   if (wishlistExists):
     sql = "SELECT * FROM wishlist WHERE userID = %(user_id)s"
     cur.execute(sql, {'user_id': userId})
-    for item in cur:
+    
+    for item in cur.fetchall():
       print(item)
       iID = item[2]
       temp = getItem(iID)
       items.append(temp)
     
 
-  return render_template('listpage.html', wishlist = items, wishlistExists = wishlistExists)
+  return render_template('listpage.html', wishlist = items, wishlistExists = wishlistExists, userID = userId)
 
 
 
-@app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
-def edit_item(item_id):
+# @app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
+# def edit_item(item_id):
 
-    sql = "SELECT * FROM item WHERE itemID = %(itemID)s"
-    cur.execute(sql, {'itemID': item_id})
+#     sql = "SELECT * FROM item WHERE itemID = %(itemID)s"
+#     cur.execute(sql, {'itemID': item_id})
+    
+#     for item in cur:
+#         itemInfo = {
+#             'id': item[0],
+#             'image': item[3],
+#             'name': item[1],
+#             'description': item[2],
+#             'link': item[4]
+#         }
 
-    for item in cur:
-        itemInfo = {
-            'id': item[0],
-            'image': item[3],
-            'name': item[1],
-            'description': item[2],
-            'link': item[4]
-        }
 
-
-    return itemInfo
+#     return itemInfo
 
 @app.route('/save_item/<item_id>', methods = ['GET', 'POST'])
 def save_item(item_id):
 
-    sql = "UPDATE item SET name = %(newName)s, description = %(newDesc)s, ImgUrl = %(newImage)s, itemLink = %(newLink)s WHERE (itemID = %(itemID)s)"
-    newImage = request.args.get('newImage')    
-    newName = request.args.get('newName')
-    newDesc = request.args.get('newDesc')
-    newLink = request.args.get('newLink')    
-    cur.execute(sql, {'itemID': item_id, 'newName': newName, 'newImage': newImage, 'newDesc': newDesc, 'newLink': newLink})
+  sql = "UPDATE item SET name = %(newName)s, description = %(newDesc)s, ImgUrl = %(newImage)s, itemLink = %(newLink)s WHERE (itemID = %(itemID)s)"
+  newImage = request.args.get('newImage')    
+  newName = request.args.get('newName')
+  newDesc = request.args.get('newDesc')
+  newLink = request.args.get('newLink')    
+  cur.execute(sql, {'itemID': item_id, 'newName': newName, 'newImage': newImage, 'newDesc': newDesc, 'newLink': newLink})
 
-    db.commit()
+  db.commit()
 
-    z = {'response': 'success'}
+  z = {'response': 'success'}
 
-    return z
+  return z
+
+def checkItem(itemName):
+  sql = "SELECT itemID FROM item WHERE name = %(iName)s"
+  cur.execute(sql, {'iName': itemName})
+
+  print('itemName:', itemName)
+  
+  if cur:
+    for id in cur:
+      print("in for loop", id[0])
+      return id[0]
+
+  return 0
+
+def addItem(userId, itemId):
+  sql = "INSERT INTO `wishlist` (`userID`, `itemID`) VALUES (%(user_id)s, %(item_id)s)"
+  cur.execute(sql, {'user_id': userId, 'item_id': itemId})
+  db.commit()
+  return
+
+def updateUser(userID, num):
+  sql = "UPDATE user SET wishlist = %(num)s WHERE userID = %(user_id)s"
+  cur.execute(sql, {'num': num, 'user_id': userID})
+  db.commit()
+  return
 
 @app.route('/add_item/<user_id>', methods = ['GET', 'POST'])
 def add_item(user_id):
 
-    # itemExists = checkItem()
-    sql = "INSERT INTO `item` (`name`, `description`, `ImgUrl`, `itemLink`) VALUES (%(iName)s, %(iDesc)s, %(iUrl)s, %(iLink)s)"
-    iUrl = request.args.get('addImage')
-    iName = request.args.get('addName')
-    iDesc = request.args.get('addDesc')
-    iLink = request.args.get('addLink')     
+  iUrl = request.args.get('addImage')
+  iName = request.args.get('addName')
+  iDesc = request.args.get('addDesc')
+  iLink = request.args.get('addLink')
+  response = ""
+
+  itemExists = checkItem(iName)
+  print(itemExists)
+
+  if (not itemExists):
+    print("in if statement")
+    sql = "INSERT INTO `item` (`name`, `description`, `ImgUrl`, `itemLink`) VALUES (%(iName)s, %(iDesc)s, %(iUrl)s, %(iLink)s)"    
     cur.execute(sql, {"iName": iName, "iDesc": iDesc, "iUrl": iUrl, 'iLink': iLink})
-
+    response = {'response': 'Item was added to wishlist.'}
     db.commit()
+    newID = cur.lastrowid
+    print(newID)
+    addItem(int(user_id), newID)
+  else:
+    addItem(int(user_id), itemExists)
+    response = {'response': 'Item already exists. Added to wishlist from database.'}
 
-    y = {'response': 'success'}
+  updateUser(user_id, 1)
 
-    return y
+
+  return response
 
 
 @app.route('/admin/viewitems', methods = ['GET', 'POST'])
@@ -319,14 +358,14 @@ def items():
 
   for item in cur:
 
-      temp = {
-          'id': item[0],
-          'name': item[1],
-          'description': item[2],
-          'image': item[3],
-          'link': item[4]
-      }
-      items.append(temp)
+    temp = {
+      'id': item[0],
+      'name': item[1],
+      'description': item[2],
+      'image': item[3],
+      'link': item[4]
+    }
+    items.append(temp)
 
   return render_template('admin_viewitems.html', wishlist = items)
 
