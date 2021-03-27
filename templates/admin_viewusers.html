@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -29,17 +30,6 @@
               {% include '_accounts.html' %}
 
             {% endfor %}
-            <tr>
-              <th scope="row">2</th>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>
-                <button id="example" type="button" class="btn text-white editUserButton btn-warning" data-toggle="modal" data-target="#editModal">Edit</button>
-              </td>
-              <td>
-                <button type="button" class="btn deleteUserButton btn-danger">Delete</button>
-              </td>
-            </tr>
           </tbody>
         </table>
 
@@ -131,19 +121,7 @@
                 dataType: "json",
                 data: {'userName': user_name.toString(), 
                         'userPass': user_pass.toString()},
-                contentType: "application/json",
-                success: function(data, status) {
-                    console.log(data)
-                    alert('Successfully saved changes')
-                    $('#editUserModal').modal('toggle')
-                    location.reload()
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                },
-                complete: function(data, status) { //optional, used for debugging purposes
-                    //console.log(status);
-                }
+                contentType: "application/json"
             });
 
         })
@@ -158,12 +136,10 @@
                 type: "GET",
                 url: `/admin/delete_user/${user_id}`,
                 dataType: "json",
-                data: {'userName': user_name.toString(), 
-                        'userPass': user_pass.toString()},
                 contentType: "application/json",
-                success: function(data,status) {
-                  alert('Successfully saved changes')
-                  window.location.reload()
+                success: function(status) {
+                  alert('Successfully Deleted User')
+                  location.reload()
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);

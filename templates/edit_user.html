@@ -19,7 +19,7 @@
       <br>
       <div style="text-align:center" class="form-group">
         <form action="" method="post">
-          <input type="text" style='padding: 4px' placeholder="Username" name="username" value="{{
+          <input id="username" type="text" style='padding: 4px' placeholder="Username" name="username" value="{{
             request.form.username }}">
       </div>
 	    <div style="text-align:center" class="form-group">
@@ -30,13 +30,39 @@
             <input type="password" style='padding: 4px' placeholder="New Password" name="new_password" value="{{
             request.form.new_password }}">
       </div>
+      <br>
 	    <div style="text-align:center">
         <button style='padding: 4px' class="btn btn-info" type="submit" value="Save">Save</button>
           {% if error %}
             <p class="error"><strong>Error:</strong> {{ error }}
           {% endif %}  
 		  </div>
+      <br>
+      <div style="text-align:center">
+        <button  class="btn deleteAccountButton btn-danger" type="button">Delete Account</button>
+      </div>
 		  </form>
     </div>
+
+    <script>
+       $('.deleteAccountButton').on('click', function(e){
+          e.preventDefault()
+          var user_name = $('#username').val()
+
+          $.ajax({
+                type: "GET",
+                url: `/user/delete_account/${user_name}`,
+                dataType: "json",
+                contentType: "application/json",
+                success: function(status) {
+                  alert('Successfully Deleted User')
+                  window.location.href="/"
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        })
+    </script>
   </body>
 </html>
