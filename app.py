@@ -116,20 +116,7 @@ def viewusers():
         }
         accounts.append(temp)
 
-    # accounts =[
-    #     {
-    #         'id': 2,
-    #         'username': 'antPerez',
-    #         'password': '$ky1234',
-    #         'hasList': True
-    #     },
-    #     {
-    #         'id': 48,
-    #         'username': 'jayZep',
-    #         'password': 'Pa$$1234',
-    #         'hasList': False
-    #     }
-    # ]
+    
     return render_template('admin_viewusers.html', accounts=accounts)
 
 @app.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
@@ -193,16 +180,16 @@ def login():
               print(user)
               if request.form['username'] == user[1]: #checks that the username in database macthes with what the user typed in
                   if request.form['password'] == user[2]: #if the username matches, it checks that the password to that username also matches
-                      return redirect(url_for('landing_page'))
+                      return redirect(url_for('landing_page', userId = user[0]))
                   else:
                       error = "Wrong password."
               else:
                   error = "No user with that username exists"
     return render_template('login.html', error=error)
 
-@app.route('/landing-page', methods = ['GET', 'POST'])
-def landing_page():
-  return render_template('index.html')
+@app.route('/landing-page/<userId>', methods = ['GET', 'POST'])
+def landing_page(userId):
+  return render_template('index.html', user_id = userId)
 
 @app.route('/user/edit_user', methods = ['GET', 'POST'])
 def user_edit_user():
@@ -226,50 +213,51 @@ def user_edit_user():
       error = "Old Password is wrong."
   return render_template('edit_user.html', error=error)
 
+def hasItems(userId):
+  sql = "SELECT * from user where userID = %(userId)s"
+  cur.execute(sql, {'userId': userId})
 
+  for user in cur:
+    if (user[3]):
+      return True
+  
+  return False
 
+def getItem(item_id):
+  sql = "SELECT * FROM item WHERE itemID = %(item_id)s"
+  cur.execute(sql, {'item_id': item_id})
+  itemInfo = ""
+  
+  for item in cur:
+    itemInfo = {
+        'id': item[0],
+        'name': item[1],
+        'description': item[2],
+        'image': item[3],
+        'link': item[4]
+    }
+  
+  return itemInfo
 
-@app.route('/wishlist', methods = ['GET', 'POST'])
-def wishlist():
+@app.route('/wishlist/<userId>', methods = ['GET', 'POST'])
+def wishlist(userId):
 
-    sql = "SELECT * FROM item"
-    cur.execute(sql)
-    items = []
+  wishlistExists = hasItems(userId)
+  items = []
 
+  if (wishlistExists):
+    sql = "SELECT * FROM wishlist WHERE userID = %(user_id)s"
+    cur.execute(sql, {'user_id': userId})
     for item in cur:
+      print(item)
+      iID = item[2]
+      temp = getItem(iID)
+      items.append(temp)
+    
 
-        temp = {
-            'id': item[0],
-            'name': item[1],
-            'description': item[2],
-            'image': item[3],
-            'link': item[4]
-        }
-        items.append(temp)
+  return render_template('listpage.html', wishlist = items, wishlistExists = wishlistExists)
 
-    # items = [
-    #     {
-    #         'id': 1,
-    #         'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
-    #         'name': 'mountains',
-    #         'description': 'beautiful mountains and lake of who knows where',
-    #         'links': 'google.com'
-    #     },
-    #     {
-    #         'id': 2,
-    #         'image': 'https://cdn1.matadornetwork.com/blogs/1/2019/10/seljalandsfoss-most-instagrammed-waterfalls-world-1200x855.jpg',
-    #         'name': 'waterfall',
-    #         'description': 'beautiful waterfall of unknown area',
-    #         'links': 'amazon.com'
-    #     }
-    # ]
 
-    return render_template('listpage.html', wishlist = items)
-
-# @app.route('/getWishlist', methods = ['GET', 'POST'])
-# def getWishlist():
-
-#     return wishlist
 
 @app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
 def edit_item(item_id):
@@ -305,9 +293,10 @@ def save_item(item_id):
 
     return z
 
-@app.route('/add_item', methods = ['GET', 'POST'])
-def add_item():
+@app.route('/add_item/<user_id>', methods = ['GET', 'POST'])
+def add_item(user_id):
 
+    # itemExists = checkItem()
     sql = "INSERT INTO `item` (`name`, `description`, `ImgUrl`, `itemLink`) VALUES (%(iName)s, %(iDesc)s, %(iUrl)s, %(iLink)s)"
     iUrl = request.args.get('addImage')
     iName = request.args.get('addName')

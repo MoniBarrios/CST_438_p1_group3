@@ -39,10 +39,15 @@
             </tr>
           </thead>
           <tbody>
-            {% for item in wishlist %}
+            {% if wishlistExists %}
+              {% for item in wishlist %}
               {% include '_list.html' %}
 
-            {% endfor %}
+              {% endfor %}
+            {% else %}
+            <td>No Items in Wishlist</td>
+            {% endif %}
+            
             <!-- <tr>
               <th scope="row">2</th>
               <td>Jacob</td>
