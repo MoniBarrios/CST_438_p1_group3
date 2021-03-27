@@ -52,7 +52,34 @@
             <p class="error"><strong>Error:</strong> {{ error }}
           {% endif %}  
 		  </div>
+
+      <div style="text-align:center">
+        <button  class="btn deleteAccountButton btn-danger" type="button">Delete Account</button>
+      </div>
+      
 		  </form>
     </div>
+
+    <script>
+      $('.deleteAccountButton').on('click', function(e){
+         e.preventDefault()
+         var user_name = $('#username').val()
+
+         $.ajax({
+               type: "GET",
+               url: `/user/delete_account/${user_name}`,
+               dataType: "json",
+               contentType: "application/json",
+               success: function(status) {
+                 alert('Successfully Deleted User')
+                 window.location.href="/"
+               },
+               error: function(xhr, status, error) {
+                   console.error(xhr.responseText);
+               }
+           });
+       })
+   </script>
+
   </body>
 </html>
