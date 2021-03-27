@@ -116,20 +116,7 @@ def viewusers():
         }
         accounts.append(temp)
 
-    # accounts =[
-    #     {
-    #         'id': 2,
-    #         'username': 'antPerez',
-    #         'password': '$ky1234',
-    #         'hasList': True
-    #     },
-    #     {
-    #         'id': 48,
-    #         'username': 'jayZep',
-    #         'password': 'Pa$$1234',
-    #         'hasList': False
-    #     }
-    # ]
+    
     return render_template('admin_viewusers.html', accounts=accounts)
 
 @app.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
@@ -193,16 +180,16 @@ def login():
               print(user)
               if request.form['username'] == user[1]: #checks that the username in database macthes with what the user typed in
                   if request.form['password'] == user[2]: #if the username matches, it checks that the password to that username also matches
-                      return redirect(url_for('landing_page'))
+                      return redirect(url_for('landing_page', userId = user[0]))
                   else:
                       error = "Wrong password."
               else:
                   error = "No user with that username exists"
     return render_template('login.html', error=error)
 
-@app.route('/landing-page', methods = ['GET', 'POST'])
-def landing_page():
-  return render_template('index.html')
+@app.route('/landing-page/<userId>', methods = ['GET', 'POST'])
+def landing_page(userId):
+  return render_template('index.html', user_id = userId)
 
 @app.route('/user/edit_user', methods = ['GET', 'POST'])
 def user_edit_user():
@@ -226,100 +213,141 @@ def user_edit_user():
       error = "Old Password is wrong."
   return render_template('edit_user.html', error=error)
 
+def hasItems(userId):
+  sql = "SELECT * from user where userID = %(userId)s"
+  cur.execute(sql, {'userId': userId})
+
+  for user in cur:
+    if (user[3]):
+      return True
+  
+  return False
+
+def getItem(item_id):
+  sql = "SELECT * FROM item WHERE itemID = %(item_id)s"
+  cur.execute(sql, {'item_id': item_id})
+  itemInfo = ""
+  
+  for item in cur:
+    itemInfo = {
+        'id': item[0],
+        'name': item[1],
+        'description': item[2],
+        'image': item[3],
+        'link': item[4]
+    }
+  
+  return itemInfo
+
+@app.route('/wishlist/<userId>', methods = ['GET', 'POST'])
+def wishlist(userId):
+
+  wishlistExists = hasItems(userId)
+  items = []
+
+  if (wishlistExists):
+    sql = "SELECT * FROM wishlist WHERE userID = %(user_id)s"
+    cur.execute(sql, {'user_id': userId})
+    
+    for item in cur.fetchall():
+      print(item)
+      iID = item[2]
+      temp = getItem(iID)
+      items.append(temp)
+    
+
+  return render_template('listpage.html', wishlist = items, wishlistExists = wishlistExists, userID = userId)
 
 
 
-@app.route('/wishlist', methods = ['GET', 'POST'])
-def wishlist():
+# @app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
+# def edit_item(item_id):
 
-    sql = "SELECT * FROM item"
-    cur.execute(sql)
-    items = []
-
-    for item in cur:
-
-        temp = {
-            'id': item[0],
-            'name': item[1],
-            'description': item[2],
-            'image': item[3],
-            'link': item[4]
-        }
-        items.append(temp)
-
-    # items = [
-    #     {
-    #         'id': 1,
-    #         'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
-    #         'name': 'mountains',
-    #         'description': 'beautiful mountains and lake of who knows where',
-    #         'links': 'google.com'
-    #     },
-    #     {
-    #         'id': 2,
-    #         'image': 'https://cdn1.matadornetwork.com/blogs/1/2019/10/seljalandsfoss-most-instagrammed-waterfalls-world-1200x855.jpg',
-    #         'name': 'waterfall',
-    #         'description': 'beautiful waterfall of unknown area',
-    #         'links': 'amazon.com'
-    #     }
-    # ]
-
-    return render_template('listpage.html', wishlist = items)
-
-# @app.route('/getWishlist', methods = ['GET', 'POST'])
-# def getWishlist():
-
-#     return wishlist
-
-@app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
-def edit_item(item_id):
-
-    sql = "SELECT * FROM item WHERE itemID = %(itemID)s"
-    cur.execute(sql, {'itemID': item_id})
-
-    for item in cur:
-        itemInfo = {
-            'id': item[0],
-            'image': item[3],
-            'name': item[1],
-            'description': item[2],
-            'link': item[4]
-        }
+#     sql = "SELECT * FROM item WHERE itemID = %(itemID)s"
+#     cur.execute(sql, {'itemID': item_id})
+    
+#     for item in cur:
+#         itemInfo = {
+#             'id': item[0],
+#             'image': item[3],
+#             'name': item[1],
+#             'description': item[2],
+#             'link': item[4]
+#         }
 
 
-    return itemInfo
+#     return itemInfo
 
 @app.route('/save_item/<item_id>', methods = ['GET', 'POST'])
 def save_item(item_id):
 
-    sql = "UPDATE item SET name = %(newName)s, description = %(newDesc)s, ImgUrl = %(newImage)s, itemLink = %(newLink)s WHERE (itemID = %(itemID)s)"
-    newImage = request.args.get('newImage')    
-    newName = request.args.get('newName')
-    newDesc = request.args.get('newDesc')
-    newLink = request.args.get('newLink')    
-    cur.execute(sql, {'itemID': item_id, 'newName': newName, 'newImage': newImage, 'newDesc': newDesc, 'newLink': newLink})
+  sql = "UPDATE item SET name = %(newName)s, description = %(newDesc)s, ImgUrl = %(newImage)s, itemLink = %(newLink)s WHERE (itemID = %(itemID)s)"
+  newImage = request.args.get('newImage')    
+  newName = request.args.get('newName')
+  newDesc = request.args.get('newDesc')
+  newLink = request.args.get('newLink')    
+  cur.execute(sql, {'itemID': item_id, 'newName': newName, 'newImage': newImage, 'newDesc': newDesc, 'newLink': newLink})
 
-    db.commit()
+  db.commit()
 
-    z = {'response': 'success'}
+  z = {'response': 'success'}
 
-    return z
+  return z
 
-@app.route('/add_item', methods = ['GET', 'POST'])
-def add_item():
+def checkItem(itemName):
+  sql = "SELECT itemID FROM item WHERE name = %(iName)s"
+  cur.execute(sql, {'iName': itemName})
 
-    sql = "INSERT INTO `item` (`name`, `description`, `ImgUrl`, `itemLink`) VALUES (%(iName)s, %(iDesc)s, %(iUrl)s, %(iLink)s)"
-    iUrl = request.args.get('addImage')
-    iName = request.args.get('addName')
-    iDesc = request.args.get('addDesc')
-    iLink = request.args.get('addLink')     
+  print('itemName:', itemName)
+  
+  if cur:
+    for id in cur:
+      print("in for loop", id[0])
+      return id[0]
+
+  return 0
+
+def addItem(userId, itemId):
+  sql = "INSERT INTO `wishlist` (`userID`, `itemID`) VALUES (%(user_id)s, %(item_id)s)"
+  cur.execute(sql, {'user_id': userId, 'item_id': itemId})
+  db.commit()
+  return
+
+def updateUser(userID, num):
+  sql = "UPDATE user SET wishlist = %(num)s WHERE userID = %(user_id)s"
+  cur.execute(sql, {'num': num, 'user_id': userID})
+  db.commit()
+  return
+
+@app.route('/add_item/<user_id>', methods = ['GET', 'POST'])
+def add_item(user_id):
+
+  iUrl = request.args.get('addImage')
+  iName = request.args.get('addName')
+  iDesc = request.args.get('addDesc')
+  iLink = request.args.get('addLink')
+  response = ""
+
+  itemExists = checkItem(iName)
+  print(itemExists)
+
+  if (not itemExists):
+    print("in if statement")
+    sql = "INSERT INTO `item` (`name`, `description`, `ImgUrl`, `itemLink`) VALUES (%(iName)s, %(iDesc)s, %(iUrl)s, %(iLink)s)"    
     cur.execute(sql, {"iName": iName, "iDesc": iDesc, "iUrl": iUrl, 'iLink': iLink})
-
+    response = {'response': 'Item was added to wishlist.'}
     db.commit()
+    newID = cur.lastrowid
+    print(newID)
+    addItem(int(user_id), newID)
+  else:
+    addItem(int(user_id), itemExists)
+    response = {'response': 'Item already exists. Added to wishlist from database.'}
 
-    y = {'response': 'success'}
+  updateUser(user_id, 1)
 
-    return y
+
+  return response
 
 
 @app.route('/admin/viewitems', methods = ['GET', 'POST'])
@@ -330,14 +358,14 @@ def items():
 
   for item in cur:
 
-      temp = {
-          'id': item[0],
-          'name': item[1],
-          'description': item[2],
-          'image': item[3],
-          'link': item[4]
-      }
-      items.append(temp)
+    temp = {
+      'id': item[0],
+      'name': item[1],
+      'description': item[2],
+      'image': item[3],
+      'link': item[4]
+    }
+    items.append(temp)
 
   return render_template('admin_viewitems.html', wishlist = items)
 
