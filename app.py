@@ -237,14 +237,13 @@ def wishlist():
     items = []
 
     for item in cur:
-        print(item)
 
         temp = {
             'id': item[0],
             'name': item[1],
             'description': item[2],
             'image': item[3],
-            'links': "google.com"
+            'link': item[4]
         }
         items.append(temp)
 
@@ -284,11 +283,117 @@ def edit_item(item_id):
             'image': item[3],
             'name': item[1],
             'description': item[2],
-            'links': 'google.com'
+            'link': item[4]
         }
 
 
     return itemInfo
+
+@app.route('/save_item/<item_id>', methods = ['GET', 'POST'])
+def save_item(item_id):
+
+    sql = "UPDATE item SET name = %(newName)s, description = %(newDesc)s, ImgUrl = %(newImage)s, itemLink = %(newLink)s WHERE (itemID = %(itemID)s)"
+    newImage = request.args.get('newImage')    
+    newName = request.args.get('newName')
+    newDesc = request.args.get('newDesc')
+    newLink = request.args.get('newLink')    
+    cur.execute(sql, {'itemID': item_id, 'newName': newName, 'newImage': newImage, 'newDesc': newDesc, 'newLink': newLink})
+
+    db.commit()
+
+    z = {'response': 'success'}
+
+    return z
+
+@app.route('/add_item', methods = ['GET', 'POST'])
+def add_item():
+
+    sql = "INSERT INTO `item` (`name`, `description`, `ImgUrl`, `itemLink`) VALUES (%(iName)s, %(iDesc)s, %(iUrl)s, %(iLink)s)"
+    iUrl = request.args.get('addImage')
+    iName = request.args.get('addName')
+    iDesc = request.args.get('addDesc')
+    iLink = request.args.get('addLink')     
+    cur.execute(sql, {"iName": iName, "iDesc": iDesc, "iUrl": iUrl, 'iLink': iLink})
+
+    db.commit()
+
+    y = {'response': 'success'}
+
+    return y
+
+
+@app.route('/admin/viewitems', methods = ['GET', 'POST'])
+def items():
+  sql = "SELECT * FROM item"
+  cur.execute(sql)
+  items = []
+
+  for item in cur:
+
+      temp = {
+          'id': item[0],
+          'name': item[1],
+          'description': item[2],
+          'image': item[3],
+          'link': item[4]
+      }
+      items.append(temp)
+
+  return render_template('admin_viewitems.html', wishlist = items)
+
+
+
+
+@app.route('/admin/edit_item/<item_id>', methods = ['GET', 'POST'])
+def admin_edit_item(item_id):
+
+    sql = "SELECT * FROM item WHERE itemID = %(itemID)s"
+    cur.execute(sql, {'itemID': item_id})
+
+    for item in cur:
+        itemInfo = {
+            'id': item[0],
+            'image': item[3],
+            'name': item[1],
+            'description': item[2],
+            'link': item[4]
+        }
+
+
+    return itemInfo
+
+@app.route('/admin/save_item/<item_id>', methods = ['GET', 'POST'])
+def admin_save_item(item_id):
+
+    sql = "UPDATE item SET name = %(newName)s, description = %(newDesc)s, ImgUrl = %(newImage)s, itemLink = %(newLink)s WHERE (itemID = %(itemID)s)"
+    newImage = request.args.get('newImage')    
+    newName = request.args.get('newName')
+    newDesc = request.args.get('newDesc')
+    newLink = request.args.get('newLink')    
+    cur.execute(sql, {'itemID': item_id, 'newName': newName, 'newImage': newImage, 'newDesc': newDesc, 'newLink': newLink})
+
+    db.commit()
+
+    z = {'response': 'success'}
+
+    return z
+
+@app.route('/admin/add_item', methods = ['GET', 'POST'])
+def admin_add_item():
+
+    sql = "INSERT INTO `item` (`name`, `description`, `ImgUrl`, `itemLink`) VALUES (%(iName)s, %(iDesc)s, %(iUrl)s, %(iLink)s)"
+    iUrl = request.args.get('addImage')
+    iName = request.args.get('addName')
+    iDesc = request.args.get('addDesc')
+    iLink = request.args.get('addLink')     
+    cur.execute(sql, {"iName": iName, "iDesc": iDesc, "iUrl": iUrl, 'iLink': iLink})
+
+    db.commit()
+
+    y = {'response': 'success'}
+
+    return y
+
 
 # start the server with the 'run()' method
 if __name__ == '__main__':

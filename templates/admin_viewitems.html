@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> My Wishlist</title>
+    <title> Admin View Items</title>
    
     <!-- CSS -->
     <!-- <link href="static/bootstrap.min.css" rel="stylesheet" media="screen"> -->
@@ -20,14 +20,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
   </head>
-    <body>
-        <h1 class="etc">My Wishlist</h1>
+    <body class="bg-dark">
+        <h1 class="etc">Items</h1>
         <div style="text-align:right">
           <button id="addItem" type="button" class="btn addItem btn-success" data-toggle="modal" data-target="#addItemModal">Add Item</button>
-          <a class="btn btn-info" href="/landing-page" role="button">HOME</a>
+          <a class="btn btn-info" href="/admin" role="button">HOME</a>
         </div>
         <br>
-        <table class="table table-hover table-bordered table-striped">
+        <table class="table table-dark table-hover table-bordered table-striped">
           <thead>
             <tr>
               <th scope="col">Image</th>
@@ -147,7 +147,7 @@
 
           $.ajax({
                 type: "GET",
-                url: `/edit_item/${item_id}`,
+                url: `/admin/edit_item/${item_id}`,
                 dataType: "json",
                 contentType: "application/json",
                 success: function(data, status) {
@@ -190,7 +190,7 @@
           $.ajax({
 
             type: "GET",
-            url: `/save_item/${item_id}`,
+            url: `/admin/save_item/${item_id}`,
             dataType: "json",
             contentType: "application/json",
             data:{
@@ -238,7 +238,7 @@
           $.ajax({
 
             type: "GET",
-            url: `/add_item`,
+            url: `/admin/add_item`,
             dataType: "json",
             contentType: "application/json",
             data:{
