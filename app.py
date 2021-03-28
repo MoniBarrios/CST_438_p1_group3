@@ -209,7 +209,7 @@ def login():
             print(user)
             if name == user[1]: #checks that the username in database macthes with what the user typed in
                 if request.form['password'] == user[2]: #if the username matches, it checks that the password to that username also matches
-                  return redirect(url_for('landing_page'))
+                  return redirect(url_for('landing_page', user[0]))
                 else:
                   error = "Wrong password."
                   print(error)
