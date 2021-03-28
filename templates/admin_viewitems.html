@@ -261,5 +261,29 @@
 
         })
 
+        $('.removeButton').on('click', function(e) {
+          e.preventDefault()
+
+          var item_id = $(this).attr('name');
+          
+          $.ajax({
+                type: "GET",
+                url: `/admin/remove_item/${item_id}`,
+                dataType: "json",
+                contentType: "application/json",
+                success: function(status) {
+                  alert('Successfully Deleted Item')
+                  location.reload()
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                },
+                complete: function(data, status) { //optional, used for debugging purposes
+                    //console.log(status);
+                }
+            });
+
+        })
+
       })
     </script>
