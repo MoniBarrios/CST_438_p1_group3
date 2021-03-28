@@ -50,7 +50,7 @@ def reason(password): #will tell you what you need to fix in password
   if not length:
     return "Password must be longer than 6 characters."
 
-def valid_username(username):
+def valid_username(username): #will make sure that the username is not already in use
   user = users.keys()
   sql = "SELECT * FROM user WHERE username = %(username)s"
   cur.execute(sql,{'username':username})
@@ -59,7 +59,7 @@ def valid_username(username):
       return False
   return True
 
-def valid_password(username, password):
+def valid_password(username, password): #makes sure that the password matches with the user who is trying to log in
   sql = "SELECT * FROM user WHERE username = %(username)s" 
   cur.execute(sql,{'username':username})
   for user in cur:
@@ -76,21 +76,21 @@ def create_account():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if check(password) and valid_username(username):
-          sql = "INSERT INTO `user` (`username`, `password`) VALUES (%(username)s, %(password)s);"
-          cur.execute(sql,{"username":username, "password":password})
+        if check(password) and valid_username(username): #if the username is not already in use and the password meets min requirements
+          sql = "INSERT INTO `user` (`username`, `password`) VALUES (%(username)s, %(password)s);" 
+          cur.execute(sql,{"username":username, "password":password}) #both the username and password gets inserted into the database
           db.commit()
-          users[username] = password
+          users[username] = password #locally inserts the username and password into a dictionary
           return redirect(url_for('login'))
-        elif not valid_username(username):
+        elif not valid_username(username): #if username is already in use
           error = "Username already exists."
-        else:
+        else: #username is free to use but the password does not meet min requirements
           error = reason(password)
     return render_template('create_account.html', error=error)
 
 @app.route('/admin')
 def admin():
-    return render_template('admin.html')  # render a template
+    return render_template('admin.html')
 
 @app.route('/admin/viewusers', methods=['GET', 'POST'])
 def viewusers():
@@ -116,20 +116,7 @@ def viewusers():
         }
         accounts.append(temp)
 
-    # accounts =[
-    #     {
-    #         'id': 2,
-    #         'username': 'antPerez',
-    #         'password': '$ky1234',
-    #         'hasList': True
-    #     },
-    #     {
-    #         'id': 48,
-    #         'username': 'jayZep',
-    #         'password': 'Pa$$1234',
-    #         'hasList': False
-    #     }
-    # ]
+    
     return render_template('admin_viewusers.html', accounts=accounts)
 
 @app.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
@@ -198,51 +185,40 @@ def save_user(user_id):
 
     return x
 
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     username = None
     password = None
     
-    print(users)
+    # print(users)
     x = users.keys()
     if request.method == 'POST':
         sql = "SELECT * FROM user WHERE username = %(username)s" 
         name = request.form['username']
-        cur.execute(sql,{'username':name})
+        cur.execute(sql,{'username':name}) #pulls the username from the database
 
-        # rows = cur.fetchone()
-        if request.form['username'] == 'admin' and request.form['password'] == 'admin': # if request.form['username'] == rows[0] and request.form['password'] == rows[1]:
+        if request.form['username'] == 'admin' and request.form['password'] == 'admin': #if its the admin that is signing in
           return admin()
-        else: #request.form['username'] == 'admin' or request.form['password'] == 'admin':
-            for user in cur:
-              print(user)
-              if request.form['username'] == user[1]:
-                  if request.form['password'] == user[2]: #request.form['password'] == users.get(request.form['username']):
-                      return redirect(url_for('landing_page'))
-                  else:
-                      error = "Wrong password."
-              else:
-                  error = "No user with that username exists"
+        else:
+          if cur:
+            error = "Username does't exist."
+            print(error)
+
+          for user in cur: 
+            print(user)
+            if name == user[1]: #checks that the username in database macthes with what the user typed in
+                if request.form['password'] == user[2]: #if the username matches, it checks that the password to that username also matches
+                  return redirect(url_for('landing_page'))
+                else:
+                  error = "Wrong password."
+                  print(error)
+
     return render_template('login.html', error=error)
 
-@app.route('/landing-page', methods = ['GET', 'POST'])
-def landing_page():
-  
-  # if request.method == 'POST':
-  #   username = request.form['username']
-  #   password = request.form['current_password']
-  #   new_password = request.form['new_password']
-
-  #   if password == users.get(username):
-  #     if check(new_password):
-  #       users[username] = new_password
-  #     else:
-  #       error = reason(password)
-
-  return render_template('index.html')
+@app.route('/landing-page/<userId>', methods = ['GET', 'POST'])
+def landing_page(userId):
+  return render_template('index.html', user_id = userId)
 
 @app.route('/user/edit_user', methods = ['GET', 'POST'])
 def user_edit_user():
@@ -252,18 +228,19 @@ def user_edit_user():
     password = request.form['old_password']
     new_password = request.form['new_password']
 
-    if valid_password(username, password):
-      if check(new_password):
-        sql = "UPDATE user SET password = %(userPass)s WHERE username = %(userName)s"
-        cur.execute(sql, {'userPass': new_password, 'userName':username})
+    if valid_password(username, password): #makes sure the username and password matches
+      if check(new_password): #if password meets the min requirements
+        sql = "UPDATE user SET password = %(userPass)s WHERE username = %(userName)s" 
+        cur.execute(sql, {'userPass': new_password, 'userName':username}) #password gets changed in the database
         db.commit()
-        users[username] = new_password
+        users[username] = new_password #password gets changed locally
         return redirect(url_for('landing_page'))
       else:
         error = reason(new_password)
     else:
-      error = "Old Password is wrong."
+      error = "Username or Password is wrong."
   return render_template('edit_user.html', error=error)
+
 
 @app.route('/user/delete_account/<user_name>', methods=['GET','POST'])
 def userDeleteAccount(user_name):
@@ -280,53 +257,167 @@ def userDeleteAccount(user_name):
 
     return render_template('edit_user.html', error=error)
 
+def hasItems(userId):
+  sql = "SELECT * from user where userID = %(userId)s"
+  cur.execute(sql, {'userId': userId})
+
+  for user in cur:
+    if (user[3]):
+      return True
+  
+  return False
+
+def getItem(item_id):
+  sql = "SELECT * FROM item WHERE itemID = %(item_id)s"
+  cur.execute(sql, {'item_id': item_id})
+  itemInfo = ""
+  
+  for item in cur:
+    itemInfo = {
+        'id': item[0],
+        'name': item[1],
+        'description': item[2],
+        'image': item[3],
+        'link': item[4]
+    }
+  
+  return itemInfo
+
+@app.route('/wishlist/<userId>', methods = ['GET', 'POST'])
+def wishlist(userId):
+
+  wishlistExists = hasItems(userId)
+  items = []
+
+  if (wishlistExists):
+    sql = "SELECT * FROM wishlist WHERE userID = %(user_id)s"
+    cur.execute(sql, {'user_id': userId})
+    
+    for item in cur.fetchall():
+      print(item)
+      iID = item[2]
+      temp = getItem(iID)
+      items.append(temp)
+    
+
+  return render_template('listpage.html', wishlist = items, wishlistExists = wishlistExists, userID = userId)
 
 
-@app.route('/wishlist', methods = ['GET', 'POST'])
-def wishlist():
 
-    sql = "SELECT * FROM item"
-    cur.execute(sql)
-    items = []
+# @app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
+# def edit_item(item_id):
 
-    for item in cur:
-        print(item)
+#     sql = "SELECT * FROM item WHERE itemID = %(itemID)s"
+#     cur.execute(sql, {'itemID': item_id})
+    
+#     for item in cur:
+#         itemInfo = {
+#             'id': item[0],
+#             'image': item[3],
+#             'name': item[1],
+#             'description': item[2],
+#             'link': item[4]
+#         }
 
-        temp = {
-            'id': item[0],
-            'name': item[1],
-            'description': item[2],
-            'image': item[3],
-            'links': "google.com"
-        }
-        items.append(temp)
 
-    # items = [
-    #     {
-    #         'id': 1,
-    #         'image': 'https://i.pinimg.com/originals/d3/c4/2a/d3c42a5fafa640f90c4c3746f9fb2c22.jpg',
-    #         'name': 'mountains',
-    #         'description': 'beautiful mountains and lake of who knows where',
-    #         'links': 'google.com'
-    #     },
-    #     {
-    #         'id': 2,
-    #         'image': 'https://cdn1.matadornetwork.com/blogs/1/2019/10/seljalandsfoss-most-instagrammed-waterfalls-world-1200x855.jpg',
-    #         'name': 'waterfall',
-    #         'description': 'beautiful waterfall of unknown area',
-    #         'links': 'amazon.com'
-    #     }
-    # ]
+#     return itemInfo
 
-    return render_template('listpage.html', wishlist = items)
+@app.route('/save_item/<item_id>', methods = ['GET', 'POST'])
+def save_item(item_id):
 
-# @app.route('/getWishlist', methods = ['GET', 'POST'])
-# def getWishlist():
+  sql = "UPDATE item SET name = %(newName)s, description = %(newDesc)s, ImgUrl = %(newImage)s, itemLink = %(newLink)s WHERE (itemID = %(itemID)s)"
+  newImage = request.args.get('newImage')    
+  newName = request.args.get('newName')
+  newDesc = request.args.get('newDesc')
+  newLink = request.args.get('newLink')    
+  cur.execute(sql, {'itemID': item_id, 'newName': newName, 'newImage': newImage, 'newDesc': newDesc, 'newLink': newLink})
 
-#     return wishlist
+  db.commit()
 
-@app.route('/edit_item/<item_id>', methods = ['GET', 'POST'])
-def edit_item(item_id):
+  z = {'response': 'success'}
+
+  return z
+
+def checkItem(itemName):
+  sql = "SELECT itemID FROM item WHERE name = %(iName)s"
+  cur.execute(sql, {'iName': itemName})
+
+  print('itemName:', itemName)
+  
+  if cur:
+    for id in cur:
+      print("in for loop", id[0])
+      return id[0]
+
+  return 0
+
+def addItem(userId, itemId):
+  sql = "INSERT INTO `wishlist` (`userID`, `itemID`) VALUES (%(user_id)s, %(item_id)s)"
+  cur.execute(sql, {'user_id': userId, 'item_id': itemId})
+  db.commit()
+  return
+
+def updateUser(userID, num):
+  sql = "UPDATE user SET wishlist = %(num)s WHERE userID = %(user_id)s"
+  cur.execute(sql, {'num': num, 'user_id': userID})
+  db.commit()
+  return
+
+@app.route('/add_item/<user_id>', methods = ['GET', 'POST'])
+def add_item(user_id):
+
+  iUrl = request.args.get('addImage')
+  iName = request.args.get('addName')
+  iDesc = request.args.get('addDesc')
+  iLink = request.args.get('addLink')
+  response = ""
+
+  itemExists = checkItem(iName)
+  print(itemExists)
+
+  if (not itemExists):
+    print("in if statement")
+    sql = "INSERT INTO `item` (`name`, `description`, `ImgUrl`, `itemLink`) VALUES (%(iName)s, %(iDesc)s, %(iUrl)s, %(iLink)s)"    
+    cur.execute(sql, {"iName": iName, "iDesc": iDesc, "iUrl": iUrl, 'iLink': iLink})
+    response = {'response': 'Item was added to wishlist.'}
+    db.commit()
+    newID = cur.lastrowid
+    print(newID)
+    addItem(int(user_id), newID)
+  else:
+    addItem(int(user_id), itemExists)
+    response = {'response': 'Item already exists. Added to wishlist from database.'}
+
+  updateUser(user_id, 1)
+
+
+  return response
+
+
+@app.route('/admin/viewitems', methods = ['GET', 'POST'])
+def items():
+  sql = "SELECT * FROM item"
+  cur.execute(sql)
+  items = []
+
+  for item in cur:
+
+    temp = {
+      'id': item[0],
+      'name': item[1],
+      'description': item[2],
+      'image': item[3],
+      'link': item[4]
+    }
+    items.append(temp)
+
+  return render_template('admin_viewitems.html', wishlist = items)
+
+
+
+
+@app.route('/admin/edit_item/<item_id>', methods = ['GET', 'POST'])
+def admin_edit_item(item_id):
 
     sql = "SELECT * FROM item WHERE itemID = %(itemID)s"
     cur.execute(sql, {'itemID': item_id})
@@ -337,11 +428,44 @@ def edit_item(item_id):
             'image': item[3],
             'name': item[1],
             'description': item[2],
-            'links': 'google.com'
+            'link': item[4]
         }
 
 
     return itemInfo
+
+@app.route('/admin/save_item/<item_id>', methods = ['GET', 'POST'])
+def admin_save_item(item_id):
+
+    sql = "UPDATE item SET name = %(newName)s, description = %(newDesc)s, ImgUrl = %(newImage)s, itemLink = %(newLink)s WHERE (itemID = %(itemID)s)"
+    newImage = request.args.get('newImage')    
+    newName = request.args.get('newName')
+    newDesc = request.args.get('newDesc')
+    newLink = request.args.get('newLink')    
+    cur.execute(sql, {'itemID': item_id, 'newName': newName, 'newImage': newImage, 'newDesc': newDesc, 'newLink': newLink})
+
+    db.commit()
+
+    z = {'response': 'success'}
+
+    return z
+
+@app.route('/admin/add_item', methods = ['GET', 'POST'])
+def admin_add_item():
+
+    sql = "INSERT INTO `item` (`name`, `description`, `ImgUrl`, `itemLink`) VALUES (%(iName)s, %(iDesc)s, %(iUrl)s, %(iLink)s)"
+    iUrl = request.args.get('addImage')
+    iName = request.args.get('addName')
+    iDesc = request.args.get('addDesc')
+    iLink = request.args.get('addLink')     
+    cur.execute(sql, {"iName": iName, "iDesc": iDesc, "iUrl": iUrl, 'iLink': iLink})
+
+    db.commit()
+
+    y = {'response': 'success'}
+
+    return y
+
 
 # start the server with the 'run()' method
 if __name__ == '__main__':
