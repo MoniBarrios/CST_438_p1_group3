@@ -161,8 +161,6 @@
                 type: "GET",
                 url: `/admin/delete_user/${user_id}`,
                 dataType: "json",
-                data: {'userName': user_name.toString(), 
-                        'userPass': user_pass.toString()},
                 contentType: "application/json",
                 success: function(data,status) {
                   alert('Successfully saved changes')
