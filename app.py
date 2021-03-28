@@ -220,7 +220,7 @@ def login():
 def landing_page(userId):
   return render_template('index.html', user_id = userId)
 
-@app.route('/user/edit_user/<useraId>', methods = ['GET', 'POST'])
+@app.route('/user/edit_user/<userId>', methods = ['GET', 'POST'])
 def user_edit_user(userId):
   error = None
   if request.method == 'POST':
