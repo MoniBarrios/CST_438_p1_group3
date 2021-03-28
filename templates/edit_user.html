@@ -47,14 +47,14 @@
             request.form.new_password }}">
       </div>
 	    <div style="text-align:center"> <br>
-        <button style='padding: 4px' class="btn btn-info" type="submit" value="Save">Save</button>
+        <button  class="btn userbtn" type="submit" value="Save">Save</button>
           {% if error %}
             <p class="error"><strong>Error:</strong> {{ error }}
           {% endif %}  
 		  </div>
-
+      <br>
       <div style="text-align:center">
-        <button  class="btn deleteAccountButton btn-danger" type="button">Delete Account</button>
+        <button  class="btn deleteAccountButton bg-red" type="button">Delete Account</button>
       </div>
       
 		  </form>
