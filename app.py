@@ -220,8 +220,8 @@ def login():
 def landing_page(userId):
   return render_template('index.html', user_id = userId)
 
-@app.route('/user/edit_user', methods = ['GET', 'POST'])
-def user_edit_user():
+@app.route('/user/edit_user/<useraId>', methods = ['GET', 'POST'])
+def user_edit_user(userId):
   error = None
   if request.method == 'POST':
     username = request.form['username']
@@ -234,7 +234,7 @@ def user_edit_user():
         cur.execute(sql, {'userPass': new_password, 'userName':username}) #password gets changed in the database
         db.commit()
         users[username] = new_password #password gets changed locally
-        return redirect(url_for('landing_page'))
+        return redirect(url_for('landing_page', userId = userId))
       else:
         error = reason(new_password)
     else:
